@@ -2,6 +2,8 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Hosts extends Pages {
     @Id
     @Column(name = "hostid")
@@ -10,10 +12,12 @@ public class Hosts extends Pages {
 
     private String host;
 
+    @JsonIgnore
     private Integer status;
 
     private String name;
-
+    
+    @JsonIgnore
     private Long templateid;
 
     private String description;

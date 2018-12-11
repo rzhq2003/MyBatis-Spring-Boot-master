@@ -1,7 +1,6 @@
 package tk.mybatis.springboot.util;
 
 import java.util.List;
-import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONObject;
@@ -9,6 +8,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import java.lang.reflect.Field;
+
 import tk.mybatis.springboot.model.Pages;
 
 /**
@@ -43,17 +43,18 @@ public abstract class BaseService<T> {
     public JSONObject getAll(Pages pages) {
     	Field[] fields = clazz.getDeclaredFields();
     	String id = fields[0].getName(); // 取出主键名称
-    	System.out.println("id:::" + id);
-    	JSONObject jsonObject = new JSONObject();
+    	System.out.println("id:::" + id);    	
         if (pages.getPage() != null && pages.getRows() != null) {
             PageHelper.startPage(pages.getPage(), pages.getRows(), id);
-        }
+        }   
         List<T> list = myMapper.selectAll();
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put("pageInfo", new PageInfo<T>(list));
         jsonObject.put("page", pages.getPage());
         jsonObject.put("rows", pages.getRows());
-    	return jsonObject;      
+        return jsonObject;
     }
+   
     
     // 通过id删除
     public int deleteById(Long id) {
@@ -80,12 +81,35 @@ public abstract class BaseService<T> {
         return myMapper.updateByPrimaryKeySelective(model);
     }
     
+    // 返回一个值，多个异常
     public T selectOne(T model) {
     	return myMapper.selectOne(model);
     }
     
+    // 返回ids
+    public String select(T model) {
+    	Field[] fields = clazz.getDeclaredFields();
+    	Field f = fields[0];
+    	String ids = "";
+    	f.setAccessible(true);
+    	List<T> list = myMapper.select(model);
+    	for( int i = 0 ; i < list.size() ; i++) {
+    		try {				
+				if (i == list.size() - 1) {
+					ids = ids + f.get(list.get(i));
+				} else {
+					ids = ids + f.get(list.get(i)) + ",";
+				}
+	    		
+			} catch (Exception e) {
+				throw new ServiceException(e.getMessage(), e);
+			}
+    	}
+    		
+    	return ids;
+    }
     
-    public JSONObject saveAndUpdate (T model) throws TooManyResultsException { 
+    public JSONObject saveAndUpdate (T model) { 
     	Field[] fields = clazz.getDeclaredFields();
     	Field f = fields[0];
     	String id = f.getName();

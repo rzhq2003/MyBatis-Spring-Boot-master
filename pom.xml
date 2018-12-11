@@ -59,46 +59,44 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
+		<!-- 引进网页框架.html -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>              
         </dependency>
  
-
+		<!-- 引进数据回滚用到 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		
+		<!-- 引进权限管理 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-
+	
+		<!-- 引进token管理 -->
 		<dependency>
 		    <groupId>io.jsonwebtoken</groupId>
 		    <artifactId>jjwt</artifactId>
 		    <version>0.9.0</version>
 		</dependency>
-
-<!-- 		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>3.4.0</version>
-		</dependency> -->
         
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
-		<!-- junit -->
+		<!-- junit测试工具 -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 
+		<!-- 引进json系列工具 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -116,6 +114,12 @@
             <artifactId>jackson-module-parameter-names</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.31</version>
+        </dependency>
+        
         <!--druid连接池依赖-->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -123,11 +127,6 @@
             <version>1.1.6</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.31</version>
-        </dependency>
 
         <!--aspectj组件-->
         <dependency>
@@ -141,6 +140,7 @@
             <artifactId>mybatis</artifactId>
             <version>${mybatis.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
@@ -152,7 +152,8 @@
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
             <version>${pagehelper.version}</version>
-        </dependency>       
+        </dependency>   
+            
         <!--通用Mapper-->
         <dependency>
             <groupId>tk.mybatis</groupId>
@@ -166,6 +167,7 @@
 		    <artifactId>springfox-swagger2</artifactId>
 		    <version>2.7.0</version>
 		</dependency>
+		
 		<dependency>
 		    <groupId>io.springfox</groupId>
 		    <artifactId>springfox-swagger-ui</artifactId>
@@ -179,17 +181,19 @@
             <version>1.0</version> <!--自定义-->
             <scope>system</scope> <!--system，类似provided，需要显式提供依赖的jar以后，Maven就不会在Repository中查找它-->
             <systemPath>${pom.basedir}/src/main/resources/lib/Gtools.jar</systemPath> <!--项目根目录下的lib文件夹下-->
-        </dependency>  
-            
+        </dependency>
+           
     </dependencies>
 	<build>
 		<plugins>
-		
-			<!--支持热部署 -->
+
             <plugin>
+                <!-- springBoot编译插件-->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <dependencies>
+	                <!-- spring热部署 -->
+	                <!-- 该依赖在此处下载不下来，可以放置在build标签外部下载完成后再粘贴进plugin中 -->
                     <dependency>
                         <groupId>org.springframework</groupId>
                         <artifactId>springloaded</artifactId>

@@ -36,6 +36,8 @@ public class SwaggerConfig {
 		Tag[] tags = { 
 				new Tag("user-module-resource", "用户管理")
 				,new Tag("usrgrp-module-resource", "用户组管理")
+				,new Tag("template-module-resource", "模板管理")
+
 				};
 		return tags;
 	}

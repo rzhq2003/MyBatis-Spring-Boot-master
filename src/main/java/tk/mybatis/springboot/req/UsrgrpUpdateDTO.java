@@ -6,9 +6,10 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "UsrgrpUpdateDTO", description = "用户组对象")
 public class UsrgrpUpdateDTO {
 
-	@ApiModelProperty(name = "usrgrpid",example = "1")
-	private String usrgrpid;
+	@ApiModelProperty(name = "usrgrpid",required = true,value = "usrgrpid必填段", example = "1")
+	private Long usrgrpid;
 	
+	 private Integer enable;
 
 	@ApiModelProperty(name = "name",example = "泉州区")
 	private String name;
@@ -19,11 +20,20 @@ public class UsrgrpUpdateDTO {
 	@ApiModelProperty(name = "userids",value = "用户组id", example = "5,4")
 	private String userids;
 	
-	public String getUsrgrpid() {
+	
+	public Integer getEnable() {
+		return enable;
+	}
+
+	public void setEnable(Integer enable) {
+		this.enable = enable;
+	}
+
+	public Long getUsrgrpid() {
 		return usrgrpid;
 	}
 
-	public void setUsrgrpid(String usrgrpid) {
+	public void setUsrgrpid(Long usrgrpid) {
 		this.usrgrpid = usrgrpid;
 	}
 

@@ -26,6 +26,7 @@ package tk.mybatis.springboot.controller;
 
 import com.alibaba.fastjson.JSONObject;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -83,7 +84,7 @@ public class UsersController {
     @PreAuthorize("hasRole('ADMIN')")
     // json格式传递对象使用RequestBody注解
     public ResObject getAll(Pages pages) {
-    	return new ResObject(200,usersService.getAll(pages));
+    	return new ResObject(200, usersService.getAll(pages));
     }
     
     // 获取用户详情
