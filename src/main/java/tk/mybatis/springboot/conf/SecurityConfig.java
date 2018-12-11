@@ -67,6 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 	      ,"/swagger-resources/**"
                 	      ,"/*/api-docs"
                 	      ,"/static/**"
+                	      ,"/druid/**"
                 	    ).permitAll()               
                  // 对于获取token的rest api要允许匿名访问
                 .antMatchers("/auth/**").permitAll()

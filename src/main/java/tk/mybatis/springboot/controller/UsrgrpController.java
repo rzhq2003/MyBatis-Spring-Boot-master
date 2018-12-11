@@ -29,6 +29,7 @@ package tk.mybatis.springboot.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -101,7 +102,7 @@ public class UsrgrpController {
     @PreAuthorize("hasRole('ADMIN')")
     // json格式传递对象使用RequestBody注解
     public ResObject getAll(Pages pages) {       
-        return new ResObject(200,usrgrpService.getAll(pages));
+    	return new ResObject(200, usrgrpService.getAll(pages));
     }
     
     // 获取用户列表
@@ -123,9 +124,9 @@ public class UsrgrpController {
                 usrgrpService.save(usrgrp);                      
             	
                 if (usrgrpAddDTO.getUserids() != null) {         
-                	String[] Userids = usrgrpAddDTO.getUserids().split(",");
+                	String[] userids = usrgrpAddDTO.getUserids().split(",");
             		List<UsersGroups> list = new ArrayList<UsersGroups>();
-            		for (String s:Userids) {
+            		for (String s:userids) {
             			UsersGroups usersGroups = new UsersGroups();
             			usersGroups.setUserid(Long.parseLong(s));
             			usersGroups.setUsrgrpid(usrgrp.getUsrgrpid());
@@ -175,9 +176,65 @@ public class UsrgrpController {
     	try {
     		JSONObject jsonObject = new JSONObject();
     		Usrgrp usrgrp = new Usrgrp();
-    		                    	        		   		
-    		jsonObject.put("usrgrpid", usrgrp.getUsrgrpid());
-        	return new ResObject(200, jsonObject);
+    		BeanUtils.copyProperties(usrgrpUpdateDTO, usrgrp); 
+    		if (usrgrp.getUsrgrpid() != null) {
+    			usrgrpService.updateById(usrgrp); //用户组名称更新 		 			
+    			
+                if (usrgrpUpdateDTO.getUserids() != null) {         
+            		UsersGroups usersGroupss = new UsersGroups();
+            		usersGroupss.setUsrgrpid(usrgrp.getUsrgrpid());
+            		System.out.println("userids:::待删除" + usersGroupsService.select(usersGroupss));
+            		if (usersGroupsService.select(usersGroupss).length() != 0) {
+            			usersGroupsService.deleteByIds(usersGroupsService.select(usersGroupss));
+            		}
+            		
+            		
+            		if (usrgrpUpdateDTO.getUserids().length() != 0) {
+                    	String[] userids = usrgrpUpdateDTO.getUserids().split(",");
+                    	System.out.println(userids.length);
+                		List<UsersGroups> list = new ArrayList<UsersGroups>();
+                		for (String s:userids) {
+                			UsersGroups usersGroups = new UsersGroups();
+                			usersGroups.setUserid(Long.parseLong(s));
+                			usersGroups.setUsrgrpid(usrgrp.getUsrgrpid());
+                			System.out.println(JSONObject.toJSONString(usersGroups));
+                			list.add(usersGroups);
+                		}
+                		System.out.println(JSONObject.toJSONString(list));           		
+                    	usersGroupsService.saves(list);
+            		}
+                }
+                
+                if (usrgrpUpdateDTO.getIds() != null) {  
+            		Rights rightss = new Rights();
+            		rightss.setGroupid(usrgrp.getUsrgrpid());
+            		System.out.println("ids:::待删除" + rightsService.select(rightss));
+            		if (rightsService.select(rightss).length() != 0) {
+            			rightsService.deleteByIds(rightsService.select(rightss));
+            		}
+            		           		
+            		if (usrgrpUpdateDTO.getIds().length() != 0) {
+                    	String[] ids = usrgrpUpdateDTO.getIds().split(",");
+                		List<Rights> list = new ArrayList<Rights>();
+                		for (String s:ids) {
+                			Rights rights = new Rights();
+                			rights.setId(Long.parseLong(s));
+                			rights.setGroupid(usrgrp.getUsrgrpid());
+                			System.out.println(JSONObject.toJSONString(rights));
+                			list.add(rights);
+                		}
+                		System.out.println(JSONObject.toJSONString(list));
+                    	rightsService.saves(list);
+            		}
+                }
+    			
+    			
+        		jsonObject.put("usrgrpid", usrgrp.getUsrgrpid());
+            	return new ResObject(200, jsonObject);
+    		} else {
+    			return new ResObject(400, "usrgrpid 不能为空");
+    		}
+
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
 	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 

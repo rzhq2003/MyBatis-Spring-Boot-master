@@ -4,7 +4,6 @@ package tk.mybatis.springboot.filter;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -78,7 +77,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setCharacterEncoding("utf-8");
         response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", HttpStatus.OK.value());
+        jsonObject.put("code", 200);
         jsonObject.put("data", JwtTokenUtils.TOKEN_PREFIX + token);
         response.getWriter().write(jsonObject.toString());
     }
@@ -87,7 +86,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
     	response.setCharacterEncoding("utf-8");
     	JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", HttpStatus.OK.value());
+        jsonObject.put("code", 400);
         System.out.println(failed.getMessage());
         jsonObject.put("data", "用户登陆失败");
     	response.getWriter().write(jsonObject.toString());
