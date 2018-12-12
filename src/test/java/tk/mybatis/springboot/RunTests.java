@@ -8,10 +8,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alibaba.fastjson.JSONObject;
+import tk.mybatis.springboot.model.UsersGroups;
+import tk.mybatis.springboot.service.UsersGroupsService;
 
-import tk.mybatis.springboot.model.Rights;
-import tk.mybatis.springboot.service.RightsService;
 
 
 
@@ -23,7 +22,7 @@ import tk.mybatis.springboot.service.RightsService;
 public class RunTests {
 
 	@Autowired
-	RightsService rightsService;
+	UsersGroupsService usersGroupsService;
 	
 	
 	
@@ -32,9 +31,10 @@ public class RunTests {
 
 	@Test
 	public void contextLoads() {
-		Rights rights = new Rights();
-		rights.setGroupid(9l);
-		System.out.println(JSONObject.toJSONString(rightsService.select(rights)));
+		UsersGroups usersGroups = new UsersGroups();
+		usersGroups.setUserid(30l);
+		String ids = usersGroupsService.getBy(usersGroups, "id");
+		System.out.println(ids);
 
 	}
 

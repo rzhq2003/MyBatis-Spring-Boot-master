@@ -2,15 +2,22 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
+
+
+import io.swagger.annotations.ApiModelProperty;
+
 @Table(name = "hosts_groups")
 public class HostsGroups extends Pages {
     @Id
     @Column(name = "hostgroupid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(hidden = true)
     private Long hostgroupid;
-
+    
+    @ApiModelProperty(name = "groupid",value = "主机组id,必填", example = "1", required = true)
     private Long groupid;
-
+    
+    @ApiModelProperty(hidden = true)
     private Long hostid;
 
     /**

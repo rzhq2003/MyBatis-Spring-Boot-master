@@ -68,16 +68,20 @@ public class AuthController {
 			}
 			System.out.println(JSONObject.toJSONString(users));
 			usersService.save(users);
+			
 			List<UsersGroups> usrgrps = new ArrayList<UsersGroups>();
 			usrgrps = usersAddDTO.getUsrgrp();
-
-			for( int i = 0 ; i < usrgrps.size() ; i++) {//内部不锁定，效率最高，但在多线程要考虑并发操作的问题。
-				usrgrps.get(i).setUserid(users.getUserid());
-			}
-			usersGroupsService.saves(usrgrps);	
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("userid", users.getUserid());
-			return new ResObject(200, jsonObject );
+			if (usrgrps!=null && !usrgrps.isEmpty()) {
+				for (int i = 0; i < usrgrps.size(); i++) {// 内部不锁定，效率最高，但在多线程要考虑并发操作的问题。
+					usrgrps.get(i).setUserid(users.getUserid());
+				}
+				usersGroupsService.saves(usrgrps);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("userid", users.getUserid());
+				return new ResObject(200, jsonObject);			
+			} else {
+				return new ResObject(400, "usrgrpid不能为空");
+			}	
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 

@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class UsrgrpAddDTO {
 	
 
-	@ApiModelProperty(name = "name",example = "泉州区")
+	@ApiModelProperty(name = "name",value = "用户组名称 ,必填段", example = "泉州区")
 	private String name;
 	
 	@ApiModelProperty(name = "ids", value= "主机组id" ,example = "1,2")

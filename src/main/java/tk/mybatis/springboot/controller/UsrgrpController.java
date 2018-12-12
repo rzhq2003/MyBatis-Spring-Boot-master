@@ -46,6 +46,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import tk.mybatis.springboot.model.Pages;
 import tk.mybatis.springboot.model.Rights;
+import tk.mybatis.springboot.model.Users;
 import tk.mybatis.springboot.model.UsersGroups;
 import tk.mybatis.springboot.model.Usrgrp;
 import tk.mybatis.springboot.req.UsrgrpAddDTO;
@@ -53,6 +54,7 @@ import tk.mybatis.springboot.req.UsrgrpUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.RightsService;
 import tk.mybatis.springboot.service.UsersGroupsService;
+import tk.mybatis.springboot.service.UsersService;
 import tk.mybatis.springboot.service.UsrgrpService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -85,10 +87,10 @@ public class UsrgrpController {
 	@Autowired
 	RightsService rightsService;
 	
+	@Autowired
+    UsersService usersService;
 	
 	
-	
-
 	
 	@Autowired
 	HttpServletRequest request;
@@ -147,10 +149,7 @@ public class UsrgrpController {
             			list.add(rights);
             		}
                 	rightsService.saves(list);
-                }
-                 
-                
-                
+                }                                              
             }
                     	        		   		
     		jsonObject.put("usrgrpid", usrgrp.getUsrgrpid());
@@ -183,9 +182,9 @@ public class UsrgrpController {
                 if (usrgrpUpdateDTO.getUserids() != null) {         
             		UsersGroups usersGroupss = new UsersGroups();
             		usersGroupss.setUsrgrpid(usrgrp.getUsrgrpid());
-            		System.out.println("userids:::待删除" + usersGroupsService.select(usersGroupss));
-            		if (usersGroupsService.select(usersGroupss).length() != 0) {
-            			usersGroupsService.deleteByIds(usersGroupsService.select(usersGroupss));
+            		System.out.println("userids:::待删除" + usersGroupsService.getIds(usersGroupss));
+            		if (usersGroupsService.getIds(usersGroupss).length() != 0) {
+            			usersGroupsService.deleteByIds(usersGroupsService.getIds(usersGroupss));
             		}
             		
             		
@@ -208,9 +207,9 @@ public class UsrgrpController {
                 if (usrgrpUpdateDTO.getIds() != null) {  
             		Rights rightss = new Rights();
             		rightss.setGroupid(usrgrp.getUsrgrpid());
-            		System.out.println("ids:::待删除" + rightsService.select(rightss));
-            		if (rightsService.select(rightss).length() != 0) {
-            			rightsService.deleteByIds(rightsService.select(rightss));
+            		System.out.println("ids:::待删除" + rightsService.getIds(rightss));
+            		if (rightsService.getIds(rightss).length() != 0) {
+            			rightsService.deleteByIds(rightsService.getIds(rightss));
             		}
             		           		
             		if (usrgrpUpdateDTO.getIds().length() != 0) {
@@ -258,5 +257,30 @@ public class UsrgrpController {
     		return new ResObject(200,jsonObject, "1");
     }
     
+
+    @ApiOperation(value = "用户组详情", notes = "用户组详情",produces = "application/json")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
+    	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
+    	})
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResObject view(@PathVariable Long id) {
+    	try {
+    		JSONObject jsonObject = new JSONObject();
+            Usrgrp usrgrp = usrgrpService.getById(id);
+            jsonObject.put("usrgrp",usrgrp);
+            UsersGroups usersGroups = new UsersGroups();
+            usersGroups.setUsrgrpid(id);
+            String userids = usersGroupsService.getBy(usersGroups, "userid");
+            List<Users> list = new ArrayList<Users>();
+            list = usersService.selectByIds(userids);
+            jsonObject.put("users",list);
+            return new ResObject(200, jsonObject);
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+			return new ResObject(400, "操作异常"); 
+		}
+    }
 }
 

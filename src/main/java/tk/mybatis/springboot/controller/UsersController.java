@@ -42,14 +42,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tk.mybatis.springboot.model.Pages;
 import tk.mybatis.springboot.model.Users;
+import tk.mybatis.springboot.model.UsersGroups;
+import tk.mybatis.springboot.model.Usrgrp;
 import tk.mybatis.springboot.req.UsersUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
+import tk.mybatis.springboot.service.UsersGroupsService;
 import tk.mybatis.springboot.service.UsersService;
+import tk.mybatis.springboot.service.UsrgrpService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,6 +74,12 @@ public class UsersController {
 
 	@Autowired
     UsersService usersService;
+	
+	@Autowired
+	UsrgrpService UsrgrpService;
+	
+	@Autowired
+	UsersGroupsService UsersGroupsService;
 	
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -96,8 +108,23 @@ public class UsersController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject view(@PathVariable Long id) {
-        Users users = usersService.getById(id);
-        return new ResObject(200, users, "成功");    
+    	try {
+        	JSONObject jsonObject = new JSONObject();
+            Users users = usersService.getById(id);
+            jsonObject.put("users",users);
+            UsersGroups usersGroups = new UsersGroups();
+            usersGroups.setUserid(id);
+            String usrgrpids = UsersGroupsService.getBy(usersGroups, "usrgrpid");
+            System.out.print(usrgrpids);
+            List<Usrgrp> list = new ArrayList<Usrgrp>();
+            list = UsrgrpService.selectByIds(usrgrpids);
+            jsonObject.put("usrgrps",list);
+            return new ResObject(200, jsonObject);  
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+			return new ResObject(400, "操作异常"); 
+		}
+  
     }
     
     // 获取用户详情

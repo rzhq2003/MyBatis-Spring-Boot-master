@@ -29,17 +29,24 @@ public abstract class BaseService<T> {
 	@SuppressWarnings("unchecked")
 	public BaseService() {
 		// 获得具体model，通过反射来根据属性条件查找数据
-	    // ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
 	    clazz = (Class<T>) ReflectionUtils.getSuperClassGenericParameterizedType(getClass());
 	    System.out.println("clazz:::" + ReflectionUtils.getSuperClassGenericParameterizedType(getClass()));
 	 }
 
-	// 通过主键查找，返回model
+	/**
+	 * 通过主键查找
+	 * 
+	 * @return 类
+	 */
     public T getById(Long id) {
         return myMapper.selectByPrimaryKey(id);
     }
     
-    // 获取全部，并分页
+	/**
+	 * 通用分页工具
+	 * 
+	 * @return 返回JSON字符串
+	 */
     public JSONObject getAll(Pages pages) {
     	Field[] fields = clazz.getDeclaredFields();
     	String id = fields[0].getName(); // 取出主键名称
@@ -56,38 +63,66 @@ public abstract class BaseService<T> {
     }
    
     
-    // 通过id删除
+	/**
+	 * 通过主键删除
+	 * 
+	 * @return int
+	 */
     public int deleteById(Long id) {
     	return myMapper.deleteByPrimaryKey(id);
     }
     
-    // 批量ids删除
+	/**
+	 * 通过主键批量删除，传入字符串如1,2,3
+	 * 
+	 * @return int
+	 */
     public int deleteByIds(String ids) {
     	return myMapper.deleteByIds(ids);
     }
     
-    // 返回0表示失败
+	/**
+	 * 保存，传入 model
+	 * 
+	 * @return int
+	 */
     public int save(T model) {
         return myMapper.insertSelective(model);
     }
     
-    // 返回0表示失败
+	/**
+	 * 批量保存，传入List<T>
+	 * 
+	 * @return int
+	 */
     public int saves(List<T> models) {
         return myMapper.insertList(models);
     }
     
-    
+	/**
+	 * 更新，传入 model
+	 * 
+	 * @return int
+	 */
     public int updateById(T model) {
         return myMapper.updateByPrimaryKeySelective(model);
     }
     
-    // 返回一个值，多个异常
+	/**
+	 * 按model查找
+	 * 
+	 * @return model
+	 */
     public T selectOne(T model) {
     	return myMapper.selectOne(model);
     }
     
-    // 返回ids
-    public String select(T model) {
+	/**
+	 * 通过model条件查找，返回主键字符串如"1,2,3,4"
+	 * 
+	 * @return 字符串
+	 */
+    public String getIds(T model) {
     	Field[] fields = clazz.getDeclaredFields();
     	Field f = fields[0];
     	String ids = "";
@@ -104,11 +139,50 @@ public abstract class BaseService<T> {
 			} catch (Exception e) {
 				throw new ServiceException(e.getMessage(), e);
 			}
-    	}
-    		
+    	}   		
     	return ids;
     }
     
+
+	/**
+	 * 通过model条件查找，返回特定字段值"1,2,3,4"
+	 * 
+	 * @return 字符串
+	 */
+    public String getBy(T model,String FieldName) {
+    	try {
+        	Field f= clazz.getDeclaredField(FieldName);
+        	String ids = "";
+        	f.setAccessible(true);
+        	List<T> list = myMapper.select(model);		
+        	for( int i = 0 ; i < list.size() ; i++) {			
+				if (i == list.size() - 1) {
+					ids = ids + f.get(list.get(i));
+				} else {
+					ids = ids + f.get(list.get(i)) + ",";
+				}	    		
+        	}   		
+        	return ids;
+		} catch (ReflectiveOperationException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}
+
+    }
+    
+	/**
+	 * 通过ids条件查找，返回主键字符串如"1,2,3,4"
+	 * 
+	 * @return List
+	 */
+    public List<T> selectByIds(String ids) {
+    	return myMapper.selectByIds(ids);
+    }
+    
+	/**
+	 * 按主键是否存在，判断保存或更新
+	 * 
+	 * @return JSON
+	 */
     public JSONObject saveAndUpdate (T model) { 
     	Field[] fields = clazz.getDeclaredFields();
     	Field f = fields[0];
