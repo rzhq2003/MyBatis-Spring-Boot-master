@@ -2,36 +2,28 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
-import io.swagger.annotations.ApiModelProperty;
 
 
 public class Hosts extends Pages {
     @Id
     @Column(name = "hostid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(hidden = true)
     private Long hostid;
     
-    @ApiModelProperty(name = "host", example = "Templates POS Params")
+
     private String host;
 
-    @JSONField(serialize = false) // 结果不被输出
-    @ApiModelProperty(hidden = true)
+
     private Integer status;
 
-    @ApiModelProperty(name = "name", example = "收银机参数组")
+
     private String name;
     
-    @JSONField(serialize = false) // 结果不被输出
-    @ApiModelProperty(hidden = true)
+
     private Long templateid;
 
-    @ApiModelProperty(name = "description", example = "无")
     private String description;
 
-    @ApiModelProperty(name = "enable", example = "0")
     private Integer enable;
 
     /**

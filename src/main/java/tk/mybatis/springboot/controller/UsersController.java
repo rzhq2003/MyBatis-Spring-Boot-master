@@ -24,6 +24,7 @@
 
 package tk.mybatis.springboot.controller;
 
+
 import com.alibaba.fastjson.JSONObject;
 
 
@@ -49,6 +50,7 @@ import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.UsersGroupsService;
 import tk.mybatis.springboot.service.UsersService;
 import tk.mybatis.springboot.service.UsrgrpService;
+import tk.mybatis.springboot.util.MyUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -135,15 +137,20 @@ public class UsersController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject update(@RequestBody UsersUpdateDTO usersUpdateDTO) {
-    	Users users = new Users();
-    	BeanUtils.copyProperties(usersUpdateDTO, users);
-		if (users.getPassword() != null) {
-			users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
-		}
-    	Integer re = usersService.updateById(users);
-    	JSONObject jsonObject = new JSONObject();
-    	jsonObject.put("userid", users.getUserid());
-        return new ResObject(200, jsonObject, re.toString());    
+    	if (MyUtils.notEmpty(usersUpdateDTO.getUserid())) {
+        	Users users = new Users();
+        	BeanUtils.copyProperties(usersUpdateDTO, users);
+    		if (MyUtils.notEmpty(users.getPassword())) {
+    			users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
+    		}
+        	Integer re = usersService.updateById(users);
+        	JSONObject jsonObject = new JSONObject();
+        	jsonObject.put("userid", users.getUserid());
+            return new ResObject(200, jsonObject, re.toString());    
+    	} else {
+    		return new ResObject(400, "userid不能为空");  
+    	}
+
     }
    
     // 用户删除

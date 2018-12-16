@@ -43,6 +43,15 @@ public abstract class BaseService<T> {
     }
     
 	/**
+	 * 通过类查找
+	 * 
+	 * @return List<T>
+	 */
+    public List<T> select(T model) {
+        return myMapper.select(model);
+    }
+    
+	/**
 	 * 通用分页工具
 	 * 
 	 * @return 返回JSON字符串
@@ -72,6 +81,7 @@ public abstract class BaseService<T> {
     	return myMapper.deleteByPrimaryKey(id);
     }
     
+    
 	/**
 	 * 通过主键批量删除，传入字符串如1,2,3
 	 * 
@@ -79,6 +89,15 @@ public abstract class BaseService<T> {
 	 */
     public int deleteByIds(String ids) {
     	return myMapper.deleteByIds(ids);
+    }
+    
+	/**
+	 * 通过类删除
+	 * 
+	 * @return int
+	 */
+    public int delete(T model) {
+    	return myMapper.delete(model);
     }
     
 	/**
@@ -147,7 +166,7 @@ public abstract class BaseService<T> {
 	/**
 	 * 通过model条件查找，返回特定字段值"1,2,3,4"
 	 * 
-	 * @return 字符串
+	 * @return FieldValue
 	 */
     public String getBy(T model,String FieldName) {
     	try {
@@ -196,8 +215,7 @@ public abstract class BaseService<T> {
     		}
     		jsonObject = new JSONObject();
     		jsonObject.put(id, f.get(model));
-    		return jsonObject;   		
-    		
+    		return jsonObject;   		   		
 		} catch (Exception e) {
             throw new ServiceException(e.getMessage(), e);
 		}  	

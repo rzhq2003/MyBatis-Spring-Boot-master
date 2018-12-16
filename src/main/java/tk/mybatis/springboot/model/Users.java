@@ -7,15 +7,13 @@ import javax.persistence.Id;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-import io.swagger.annotations.ApiModelProperty;
 
-// @ApiModel(value = "UsersExample", description = "用户对象")
+
 public class Users extends Pages {
 
     @Id
     @Column(name = "userid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(name = "userid", hidden = true)
     private Long userid;
     
     public Long getUserid() {
@@ -26,31 +24,29 @@ public class Users extends Pages {
         this.userid = userid;
     }
     
-    @ApiModelProperty(name = "name",example = "张三")
+
     private String name;
 
     /**
      * 用户名
      */
-    @ApiModelProperty(name = "username",example = "80006877")
+
     private String username;
 
     /**
      * 密码
      */
-
-    @ApiModelProperty(name = "password",example = "123456")
-    @JSONField(serialize = false) // 结果不被输出
+    @JSONField(serialize = false)
     private String password;
 
 
     /**
      * 是否可用
      */
-    @ApiModelProperty(name = "enabled",example = "0")
+
     private Integer enabled;
     
-    @ApiModelProperty(name = "role",example = "3")
+
     private Integer role;
 
 

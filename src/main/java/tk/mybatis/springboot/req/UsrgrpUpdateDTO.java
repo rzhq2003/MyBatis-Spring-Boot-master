@@ -1,33 +1,27 @@
 package tk.mybatis.springboot.req;
 
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 
 @ApiModel(value = "UsrgrpUpdateDTO", description = "用户组对象")
 public class UsrgrpUpdateDTO {
 
-	@ApiModelProperty(name = "usrgrpid",required = true,value = "usrgrpid必填段", example = "1")
+	@ApiModelProperty(name = "usrgrpid",required = true,value = "usrgrpid必填段", example = "1", position = 1)
 	private Long usrgrpid;
-	
-	 private Integer enable;
 
-	@ApiModelProperty(name = "name",example = "泉州区")
+	@ApiModelProperty(name = "name",example = "泉州区", position = 2)
 	private String name;
 	
-	@ApiModelProperty(name = "ids", value= "主机组id" ,example = "1,2")
-	private String ids;
+	@ApiModelProperty(position = 3)
+	private Integer enable;
 	
-	@ApiModelProperty(name = "userids",value = "用户组id", example = "5,4")
-	private String userids;
+	@ApiModelProperty(name = "userids", value = "用户组id,如:1,2,3", position = 4)
+	private Long[] userids;
 	
-	
-	public Integer getEnable() {
-		return enable;
-	}
-
-	public void setEnable(Integer enable) {
-		this.enable = enable;
-	}
+	@ApiModelProperty(name = "groupsids", value = "主机组id,如:1,2,3", position = 5)
+	private Long[] groupsids;
 
 	public Long getUsrgrpid() {
 		return usrgrpid;
@@ -41,23 +35,34 @@ public class UsrgrpUpdateDTO {
 		return name;
 	}
 
-	public String getIds() {
-		return ids;
-	}
-
-	public void setIds(String ids) {
-		this.ids = ids;
-	}
-
-	public String getUserids() {
-		return userids;
-	}
-
-	public void setUserids(String userids) {
-		this.userids = userids;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Integer getEnable() {
+		return enable;
+	}
+
+	public void setEnable(Integer enable) {
+		this.enable = enable;
+	}
+
+	public Long[] getUserids() {
+		return userids;
+	}
+
+	public void setUserids(Long[] userids) {
+		this.userids = userids;
+	}
+
+	public Long[] getGroupsids() {
+		return groupsids;
+	}
+
+	public void setGroupsids(Long[] groupsids) {
+		this.groupsids = groupsids;
+	}
+
+
+
 }

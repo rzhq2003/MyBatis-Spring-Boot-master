@@ -2,18 +2,16 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
-import io.swagger.annotations.ApiModelProperty;
 
 
 public class Usrgrp extends Pages {
     @Id
     @Column(name = "usrgrpid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(name = "usrgrpid", hidden = true)
     private Long usrgrpid;
     
-
     private String name;
+
 
     private Integer enable;
 

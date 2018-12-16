@@ -29,6 +29,7 @@ import javax.persistence.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 /**
  * 基础信息
  *

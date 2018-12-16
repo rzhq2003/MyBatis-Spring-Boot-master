@@ -1,5 +1,6 @@
 package tk.mybatis.springboot.controller;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import tk.mybatis.springboot.req.UsersAddDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.UsersGroupsService;
 import tk.mybatis.springboot.service.UsersService;
+import tk.mybatis.springboot.util.MyUtils;
 import io.swagger.annotations.Api;
 
 import io.swagger.annotations.ApiOperation;
@@ -61,27 +63,33 @@ public class AuthController {
 	@Transactional(rollbackOn = Exception.class)
 	public ResObject registerUser(@RequestBody UsersAddDTO usersAddDTO) {
 		try {
-			Users users = new Users();
-			users = usersAddDTO.getUsers();
-			if (users.getPassword() != null) {
-				users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
-			}
-			System.out.println(JSONObject.toJSONString(users));
-			usersService.save(users);
-			
-			List<UsersGroups> usrgrps = new ArrayList<UsersGroups>();
-			usrgrps = usersAddDTO.getUsrgrp();
-			if (usrgrps!=null && !usrgrps.isEmpty()) {
-				for (int i = 0; i < usrgrps.size(); i++) {// 内部不锁定，效率最高，但在多线程要考虑并发操作的问题。
-					usrgrps.get(i).setUserid(users.getUserid());
+			if (MyUtils.notEmpty(usersAddDTO.getUsername())) {
+				Users users = new Users();
+				BeanUtils.copyProperties(usersAddDTO, users);
+				if (MyUtils.notEmpty(users.getPassword())) {
+					users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
 				}
-				usersGroupsService.saves(usrgrps);
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("userid", users.getUserid());
-				return new ResObject(200, jsonObject);			
+				System.out.println(JSONObject.toJSONString(users));
+				
+				if (MyUtils.notEmpty(usersAddDTO.getUsrgrps())) {
+					List<UsersGroups> usrgrpslist = new ArrayList<UsersGroups>();
+					usrgrpslist = usersAddDTO.getUsrgrps();
+					usersService.save(users);
+					for (int i = 0; i < usrgrpslist.size(); i++) {// 内部不锁定，效率最高，但在多线程要考虑并发操作的问题。
+						usrgrpslist.get(i).setUserid(users.getUserid());
+					}
+					usersGroupsService.saves(usrgrpslist);
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("userid", users.getUserid());
+					return new ResObject(200, jsonObject);			
+				} else {
+					return new ResObject(400, "usrgrpid不能为空");
+				}	
+
+				
 			} else {
-				return new ResObject(400, "usrgrpid不能为空");
-			}	
+				return new ResObject(400, "username不能为空");
+			}
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
@@ -100,7 +108,7 @@ public class AuthController {
 	public ResObject logout(HttpServletRequest request, HttpServletResponse response) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		System.out.println("auth:::" + auth);
-		if (auth != null) {
+		if (MyUtils.notEmpty(auth)) {
 			new SecurityContextLogoutHandler().logout(request, response, auth);
 		}
 		return new ResObject(200, "成功");

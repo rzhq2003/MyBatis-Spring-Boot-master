@@ -17,6 +17,8 @@ public class TemplatesAddDTO {
 	private List<HostsGroups> Groups;
 	
 	private List<HostsTemplates> hosts;
+	
+	
 	public Hosts getTemplates() {
 		return templates;
 	}

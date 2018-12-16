@@ -2,27 +2,25 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import io.swagger.annotations.ApiModelProperty;
+
 
 public class Rights extends Pages {
     @Id
     @Column(name = "rightid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
+    @ApiModelProperty(hidden = true)
     private Long rightid;
 
     /**
      * 用户组
      */
-    @JsonIgnore
+    @ApiModelProperty(hidden = true)
     private Long groupid;
 
     /**
      * 主机组
      */
-    @ApiModelProperty(name = "id",value = "主机组id", example = "1")
     private Long id;
 
     /**

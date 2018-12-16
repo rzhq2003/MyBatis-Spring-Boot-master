@@ -5,14 +5,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.alibaba.fastjson.annotation.JSONField;
+
 
 public class History extends Pages {
 
     @Id
     @Column(name = "historyid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
+    @JSONField(serialize = false) // 结果不被输出
     private Long historyid;
 	
     private Long itemid;

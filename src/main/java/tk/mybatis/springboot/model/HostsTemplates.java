@@ -3,21 +3,17 @@ package tk.mybatis.springboot.model;
 import javax.persistence.*;
 
 
-
-import io.swagger.annotations.ApiModelProperty;
-
 @Table(name = "hosts_templates")
 public class HostsTemplates extends Pages {
     @Id
     @Column(name = "hosttemplateid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(hidden = true)
     private Long hosttemplateid;
     
-    @ApiModelProperty(name = "hostid",value = "主机id", example = "1")
+
     private Long hostid;
     
-    @ApiModelProperty(hidden = true)
+
     private Long templateid;
 
     /**

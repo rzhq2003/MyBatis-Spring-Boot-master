@@ -2,19 +2,24 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import io.swagger.annotations.ApiModelProperty;
+
 
 @Table(name = "users_groups")
 public class UsersGroups extends Pages {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JSONField(serialize = false)
     @ApiModelProperty(hidden = true)
     private Long id;
     
     @ApiModelProperty(hidden = true)
     private Long userid;
-    @ApiModelProperty(name = "usrgrpid",value = "用户组id", example = "1")
+    
+    @ApiModelProperty(name = "usrgrpid",example = "1")
     private Long usrgrpid;
 
     /**
