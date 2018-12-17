@@ -14,9 +14,6 @@ public class UsersGroupsService extends BaseService<UsersGroups> {
 	@Autowired
 	UsersGroupsMapper usersGroupsMapper;
 	
-	
-	public void deleteNotIn(String userids, Long usrgrpid) {
-		usersGroupsMapper.deleteNotIn(userids, usrgrpid);
-	}
+
 	
 }

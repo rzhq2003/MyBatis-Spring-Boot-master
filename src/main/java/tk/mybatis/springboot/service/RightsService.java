@@ -13,8 +13,5 @@ public class RightsService extends BaseService<Rights> {
 	@Autowired
 	RightsMapper rightsMapper;
 	
-	public void deleteNotIn(String ids, Long usrgrpid) {
-		rightsMapper.deleteNotIn(ids, usrgrpid);
-	}
 
 }

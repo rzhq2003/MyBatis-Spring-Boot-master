@@ -184,51 +184,59 @@ public class UsrgrpController {
     			usrgrpService.updateById(usrgrp);
     			
     			Long[] userids = usrgrpUpdateDTO.getUserids();
-    			UsersGroups usersGroups = new UsersGroups();
-    			usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
-    			String str = usersGroupsService.getBy(usersGroups, "userid");
-    			Long[] useridss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
-    			Long[] usersids_save = MyUtils.substract(userids, useridss); //写入数据
-    			Long[] userids_del = MyUtils.substract(useridss, userids); //删除数据
-    			if (MyUtils.notEmpty(usersids_save)) {
-    				for (int i = 0; i < usersids_save.length; i++) {
-    					usersGroups.setUserid(usersids_save[i]);
-    					usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
-    					usersGroupsService.save(usersGroups);
-					}
+    			if (userids != null) {
+        			UsersGroups usersGroups = new UsersGroups();
+        			usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
+        			String str = usersGroupsService.getBy(usersGroups, "userid");
+        			Long[] useridss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
+        			Long[] usersids_save = MyUtils.substract(userids, useridss); //写入数据
+        			System.out.print("\nuseridss" + usersids_save);
+        			Long[] userids_del = MyUtils.substract(useridss, userids); //删除数据
+        			if (MyUtils.notEmpty(usersids_save)) {
+        				for (int i = 0; i < usersids_save.length; i++) {
+        					usersGroups.setId(null);
+        					usersGroups.setUserid(usersids_save[i]);
+        					usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
+        					System.out.print("usersGroups>>>" + JSONObject.toJSONString(usersGroups));
+        					usersGroupsService.save(usersGroups);
+    					}
+        			}
+        			if (MyUtils.notEmpty(userids_del)) {
+        				for (int i = 0; i < userids_del.length; i++) {
+        					usersGroups.setUserid(userids_del[i]);
+        					usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
+        					usersGroupsService.delete(usersGroups);
+    					}
+        			}	
     			}
-    			if (MyUtils.notEmpty(userids_del)) {
-    				for (int i = 0; i < userids_del.length; i++) {
-    					usersGroups.setUserid(userids_del[i]);
-    					usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
-    					usersGroupsService.delete(usersGroups);
-					}
-    			}  			
+		
     			
 
-    			Long[] groupsids = usrgrpUpdateDTO.getGroupsids();
-    			Rights rights = new Rights();
-    			rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
-    			String strr = rightsService.getBy(rights, "id");
-    			Long[] groupsidss= (Long[]) ConvertUtils.convert(strr.split(","), Long.class);
-    			Long[] groupsids_save = MyUtils.substract(groupsids, groupsidss); //写入数据
-    			Long[] groupsids_del = MyUtils.substract(groupsidss, groupsids); //删除数据
-    			if (MyUtils.notEmpty(groupsids_save)) {
-    				for (int i = 0; i < groupsids_save.length; i++) {
-    					rights.setId(groupsids_save[i]);
-    					rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
-    					rightsService.save(rights);
-					}
+    			Long[] groupids = usrgrpUpdateDTO.getGroupids();
+    			if (groupids != null) {
+        			Rights rights = new Rights();
+        			rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
+        			String strr = rightsService.getBy(rights, "id");
+        			Long[] groupidss= (Long[]) ConvertUtils.convert(strr.split(","), Long.class);
+        			Long[] groupids_save = MyUtils.substract(groupids, groupidss); //写入数据
+        			Long[] groupids_del = MyUtils.substract(groupidss, groupids); //删除数据
+        			if (MyUtils.notEmpty(groupids_save)) {
+        				for (int i = 0; i < groupids_save.length; i++) {
+        					rights.setRightid(null);
+        					rights.setId(groupids_save[i]);
+        					rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
+        					rightsService.save(rights);
+    					}
+        			}
+        			if (MyUtils.notEmpty(groupids_del)) {
+        				for (int i = 0; i < groupids_del.length; i++) {
+        					rights.setId(groupids_del[i]);
+        					rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
+        					rightsService.delete(rights);
+    					}
+        			} 
     			}
-    			if (MyUtils.notEmpty(groupsids_del)) {
-    				for (int i = 0; i < groupsids_del.length; i++) {
-    					rights.setId(groupsids_del[i]);
-    					rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
-    					rightsService.delete(rights);
-					}
-    			} 
- 
-    		
+  		  
     			return new ResObject(200, usrgrp);
     		} else {
     			return new ResObject(400, "usrgrpid不能为空");
@@ -266,7 +274,7 @@ public class UsrgrpController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject view(@PathVariable Long id) {
     	try {
-    		JSONObject jsonObject = new JSONObject();
+    		JSONObject jsonObject = new JSONObject(true);
             Usrgrp usrgrp = usrgrpService.getById(id);
             jsonObject.put("usrgrp",usrgrp);
             UsersGroups usersGroups = new UsersGroups();

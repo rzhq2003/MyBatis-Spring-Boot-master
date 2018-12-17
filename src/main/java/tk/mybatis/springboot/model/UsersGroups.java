@@ -19,7 +19,7 @@ public class UsersGroups extends Pages {
     @ApiModelProperty(hidden = true)
     private Long userid;
     
-    @ApiModelProperty(name = "usrgrpid",example = "1")
+    @ApiModelProperty(name = "usrgrpid",example = "1", value = "必填段", required = true)
     private Long usrgrpid;
 
     /**

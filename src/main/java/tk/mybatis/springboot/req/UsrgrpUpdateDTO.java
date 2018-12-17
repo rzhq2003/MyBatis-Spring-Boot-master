@@ -20,8 +20,8 @@ public class UsrgrpUpdateDTO {
 	@ApiModelProperty(name = "userids", value = "用户组id,如:1,2,3", position = 4)
 	private Long[] userids;
 	
-	@ApiModelProperty(name = "groupsids", value = "主机组id,如:1,2,3", position = 5)
-	private Long[] groupsids;
+	@ApiModelProperty(name = "groupids", value = "主机组id,如:1,2,3", position = 5)
+	private Long[] groupids;
 
 	public Long getUsrgrpid() {
 		return usrgrpid;
@@ -55,13 +55,14 @@ public class UsrgrpUpdateDTO {
 		this.userids = userids;
 	}
 
-	public Long[] getGroupsids() {
-		return groupsids;
+	public Long[] getGroupids() {
+		return groupids;
 	}
 
-	public void setGroupsids(Long[] groupsids) {
-		this.groupsids = groupsids;
+	public void setGroupids(Long[] groupids) {
+		this.groupids = groupids;
 	}
+
 
 
 

@@ -144,54 +144,6 @@ public class MyUtils {
 		return o != null && !"".equals(o) && !"null".equals(o);
 	}
 	
-	
-	// 并集（set唯一性）
-	public static String[] union(String[] a1, String[] a2) {
-		Set<String> hs = new HashSet<String>();
-		for (String str : a1) {
-			hs.add(str);
-		}
-		for (String str : a2) {
-			hs.add(str);
-		}
-		String[] result = {};
-		return hs.toArray(result);
-	}
-
-	// 交集(注意结果集中若使用LinkedList添加，则需要判断是否包含该元素，否则其中会包含重复的元素)
-	public static String[] intersect(String[] a1, String[] a2) {
-		List<String> l = new LinkedList<String>();
-		Set<String> common = new HashSet<String>();
-		for (String str : a1) {
-			if (!l.contains(str)) {
-				l.add(str);
-			}
-		}
-		for (String str : a2) {
-			if (l.contains(str)) {
-				common.add(str);
-			}
-		}
-		String[] result = {};
-		return common.toArray(result);
-	}
-
-	// 求两个数组的差集
-	public static String[] substract(String[] a1, String[] a2) {
-		LinkedList<String> list = new LinkedList<String>();
-		for (String str : a1) {
-			if (!list.contains(str)) {
-				list.add(str);
-			}
-		}
-		for (String str : a2) {
-			if (list.contains(str)) {
-				list.remove(str);
-			}
-		}
-		String[] result = {};
-		return list.toArray(result);
-	}
 
 	// 并集（set唯一性）
 	public static Long[] union(Long[] a1, Long[] a2) {
@@ -238,6 +190,54 @@ public class MyUtils {
 			}
 		}
 		Long[] result = {};
+		return list.toArray(result);
+	}
+
+	// 并集（set唯一性）
+	public static String[] union(String[] a1, String[] a2) {
+		Set<String> hs = new HashSet<String>();
+		for (String str : a1) {
+			hs.add(str);
+		}
+		for (String str : a2) {
+			hs.add(str);
+		}
+		String[] result = {};
+		return hs.toArray(result);
+	}
+
+	// 交集(注意结果集中若使用LinkedList添加，则需要判断是否包含该元素，否则其中会包含重复的元素)
+	public static String[] intersect(String[] a1, String[] a2) {
+		List<String> l = new LinkedList<String>();
+		Set<String> common = new HashSet<String>();
+		for (String str : a1) {
+			if (!l.contains(str)) {
+				l.add(str);
+			}
+		}
+		for (String str : a2) {
+			if (l.contains(str)) {
+				common.add(str);
+			}
+		}
+		String[] result = {};
+		return common.toArray(result);
+	}
+
+	// 求两个数组的差集
+	public static String[] substract(String[] a1, String[] a2) {
+		LinkedList<String> list = new LinkedList<String>();
+		for (String str : a1) {
+			if (!list.contains(str)) {
+				list.add(str);
+			}
+		}
+		for (String str : a2) {
+			if (list.contains(str)) {
+				list.remove(str);
+			}
+		}
+		String[] result = {};
 		return list.toArray(result);
 	}
 	

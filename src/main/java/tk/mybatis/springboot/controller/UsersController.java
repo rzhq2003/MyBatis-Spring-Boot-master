@@ -111,7 +111,7 @@ public class UsersController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject view(@PathVariable Long id) {
     	try {
-        	JSONObject jsonObject = new JSONObject();
+        	JSONObject jsonObject = new JSONObject(true);
             Users users = usersService.getById(id);
             jsonObject.put("users",users);
             UsersGroups usersGroups = new UsersGroups();

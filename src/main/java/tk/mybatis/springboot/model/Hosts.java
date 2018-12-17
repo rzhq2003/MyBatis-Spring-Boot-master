@@ -2,6 +2,8 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 
 
 public class Hosts extends Pages {
@@ -13,13 +15,13 @@ public class Hosts extends Pages {
 
     private String host;
 
-
+    @JSONField(serialize = false)
     private Integer status;
 
 
     private String name;
     
-
+    @JSONField(serialize = false)
     private Long templateid;
 
     private String description;

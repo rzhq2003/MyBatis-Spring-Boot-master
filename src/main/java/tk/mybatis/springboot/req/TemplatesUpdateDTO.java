@@ -1,16 +1,14 @@
 package tk.mybatis.springboot.req;
 
-import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import tk.mybatis.springboot.model.HostsGroups;
-import tk.mybatis.springboot.model.HostsTemplates;
+
 
 
 public class TemplatesUpdateDTO {
 	
-	@ApiModelProperty(name = "templateid",value = "更新必填段", example = "3", required = true, position = 1)
-    private Long templateid;
+	@ApiModelProperty(name = "hostid",value = "更新必填段", example = "3", required = true, position = 1)
+    private Long hostid;
     
     @ApiModelProperty(name = "host", example = "Templates POS Params", position = 2)
     private String host;
@@ -20,20 +18,20 @@ public class TemplatesUpdateDTO {
 
     @ApiModelProperty(name = "description", example = "无", position = 4)
     private String description;
-
-    @ApiModelProperty(name = "enable", example = "0", position = 5)
-    private Integer enable;
     
-	private List<HostsGroups> Groups;
+    @ApiModelProperty(name = "groupids", value = "主机组id,不能为空", position = 5)
+	private Long[] groupids;
 	
-	private List<HostsTemplates> hosts;
+    @ApiModelProperty(name = "hostids", value = "主机id,可选", position = 6)
+	private Long[] hostids;
 
-	public Long getTemplateid() {
-		return templateid;
+
+	public Long getHostid() {
+		return hostid;
 	}
 
-	public void setTemplateid(Long templateid) {
-		this.templateid = templateid;
+	public void setHostid(Long hostid) {
+		this.hostid = hostid;
 	}
 
 	public String getHost() {
@@ -60,31 +58,21 @@ public class TemplatesUpdateDTO {
 		this.description = description;
 	}
 
-	public Integer getEnable() {
-		return enable;
+	public Long[] getGroupids() {
+		return groupids;
 	}
 
-	public void setEnable(Integer enable) {
-		this.enable = enable;
+	public void setGroupids(Long[] groupids) {
+		this.groupids = groupids;
 	}
 
-	public List<HostsGroups> getGroups() {
-		return Groups;
+	public Long[] getHostids() {
+		return hostids;
 	}
 
-	public void setGroups(List<HostsGroups> groups) {
-		Groups = groups;
-	}
-
-	public List<HostsTemplates> getHosts() {
-		return hosts;
-	}
-
-	public void setHosts(List<HostsTemplates> hosts) {
-		this.hosts = hosts;
-	}
-    
-    
+	public void setHostids(Long[] hostids) {
+		this.hostids = hostids;
+	}   
 	
 	
 }
