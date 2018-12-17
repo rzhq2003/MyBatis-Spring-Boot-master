@@ -193,13 +193,15 @@ public class UsrgrpController {
         			System.out.print("\nuseridss" + usersids_save);
         			Long[] userids_del = MyUtils.substract(useridss, userids); //删除数据
         			if (MyUtils.notEmpty(usersids_save)) {
+        				List<UsersGroups> uglist = new ArrayList<UsersGroups>();
         				for (int i = 0; i < usersids_save.length; i++) {
-        					usersGroups.setId(null);
-        					usersGroups.setUserid(usersids_save[i]);
-        					usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
-        					System.out.print("usersGroups>>>" + JSONObject.toJSONString(usersGroups));
-        					usersGroupsService.save(usersGroups);
+        					UsersGroups uGroups = new UsersGroups();
+        					uGroups.setUserid(usersids_save[i]);
+        					uGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
+        					uglist.add(uGroups);
     					}
+     					System.out.print("uglist>>>" + JSONObject.toJSONString(uglist));
+    					usersGroupsService.saves(uglist);
         			}
         			if (MyUtils.notEmpty(userids_del)) {
         				for (int i = 0; i < userids_del.length; i++) {
@@ -221,12 +223,14 @@ public class UsrgrpController {
         			Long[] groupids_save = MyUtils.substract(groupids, groupidss); //写入数据
         			Long[] groupids_del = MyUtils.substract(groupidss, groupids); //删除数据
         			if (MyUtils.notEmpty(groupids_save)) {
+        				List<Rights> rlist = new ArrayList<Rights>();
         				for (int i = 0; i < groupids_save.length; i++) {
-        					rights.setRightid(null);
-        					rights.setId(groupids_save[i]);
-        					rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
-        					rightsService.save(rights);
+        					Rights rightss = new Rights();
+        					rightss.setId(groupids_save[i]);
+        					rightss.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
+        					rlist.add(rightss);
     					}
+        				rightsService.saves(rlist);
         			}
         			if (MyUtils.notEmpty(groupids_del)) {
         				for (int i = 0; i < groupids_del.length; i++) {
@@ -236,8 +240,9 @@ public class UsrgrpController {
     					}
         			} 
     			}
-  		  
-    			return new ResObject(200, usrgrp);
+    			JSONObject jsonObject = new JSONObject(true);
+    			jsonObject.put("usrgrpid", usrgrpUpdateDTO.getUsrgrpid());
+    			return new ResObject(200, jsonObject);
     		} else {
     			return new ResObject(400, "usrgrpid不能为空");
     		}

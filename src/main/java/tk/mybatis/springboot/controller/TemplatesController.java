@@ -126,22 +126,26 @@ public class TemplatesController {
             	if (MyUtils.notEmpty(groupids)) {
             		hosts.setStatus(3);
             		hostsService.save(hosts); //写入模板
+            		List<HostsGroups> hGroups = new ArrayList<HostsGroups>();
             		for (int i = 0; i < groupids.length; i++) {
             			HostsGroups hostsGroups = new HostsGroups();
             			hostsGroups.setHostid(hosts.getHostid());
             			hostsGroups.setGroupid(groupids[i]);
-            			System.out.print(JSONObject.toJSONString(hostsGroups));
-            			hostsGroupsService.save(hostsGroups);
+            			hGroups.add(hostsGroups);
 					}
+            		System.out.print(JSONObject.toJSONString(hGroups));
+            		hostsGroupsService.saves(hGroups);
             		
             		Long[] hostids = templatesAddDTO.getHostids();
             		if (MyUtils.notEmpty(hostids)) {
+            			List<HostsTemplates> hTemplates = new ArrayList<HostsTemplates>();
             			for (int i = 0; i < hostids.length; i++) {
 							HostsTemplates hostsTemplates = new HostsTemplates();
 							hostsTemplates.setHostid(hostids[i]);
 							hostsTemplates.setTemplateid(hosts.getHostid());
-							hostsTemplatesService.save(hostsTemplates);
+							hTemplates.add(hostsTemplates);
 						}
+            			hostsTemplatesService.saves(hTemplates);
             		}
 
 					JSONObject jsonObject = new JSONObject();
@@ -190,13 +194,15 @@ public class TemplatesController {
     		 			Long[] groupids_save = MyUtils.substract(groupids, groupidss); //写入数据
             			Long[] groupids_del = MyUtils.substract(groupidss, groupids); //删除数据           			
             			if (MyUtils.notEmpty(groupids_save)) {
+            				List<HostsGroups> hlist = new ArrayList<HostsGroups>();
             				for (int i = 0; i < groupids_save.length; i++) {
-            					hostsGroups.setHostgroupid(null);
-            					hostsGroups.setGroupid(groupids_save[i]);
-            					hostsGroups.setHostid(templatesUpdateDTO.getHostid());
-            					System.out.print("hostsGroups>>>" + JSONObject.toJSONString(hostsGroups));
-            					hostsGroupsService.save(hostsGroups);
+            					HostsGroups hGroups = new HostsGroups();
+            					hGroups.setGroupid(groupids_save[i]);
+            					hGroups.setHostid(templatesUpdateDTO.getHostid());
+            					hlist.add(hGroups);
         					}
+            				System.out.print("hostsGroups>>>" + JSONObject.toJSONString(hlist));
+        					hostsGroupsService.saves(hlist);
             			}
             			if (MyUtils.notEmpty(groupids_del)) {
             				for (int i = 0; i < groupids_del.length; i++) {
@@ -219,13 +225,16 @@ public class TemplatesController {
 		 			Long[] hostids_save = MyUtils.substract(hostids, hostidss); //写入数据
         			Long[] hostids_del = MyUtils.substract(hostidss, hostids); //删除数据    
         			if (MyUtils.notEmpty(hostids_save)) {
+        				List<HostsTemplates> htlist = new ArrayList<HostsTemplates>();
         				for (int i = 0; i < hostids_save.length; i++) {
-        					hostsTemplates.setHosttemplateid(null);
-        					hostsTemplates.setHostid(hostids_save[i]);
-        					hostsTemplates.setTemplateid(templatesUpdateDTO.getHostid());
-        					System.out.print("hostsTemplates>>>" + JSONObject.toJSONString(hostsTemplates));
-        					hostsTemplatesService.save(hostsTemplates);
+        					HostsTemplates hTemplates = new HostsTemplates();
+        					hTemplates.setHostid(hostids_save[i]);
+        					hTemplates.setTemplateid(templatesUpdateDTO.getHostid());
+        					htlist.add(hTemplates);
     					}
+    					System.out.print("hostsTemplates>>>" + JSONObject.toJSONString(htlist));
+    					hostsTemplatesService.saves(htlist);
+    					
         			}
         			if (MyUtils.notEmpty(hostids_del)) {
         				for (int i = 0; i < hostids_del.length; i++) {
@@ -240,6 +249,8 @@ public class TemplatesController {
         			 * 主机模板关联后，相应监控项也进行关联
         			 *         			
         			*/
+        			
+        			
     			}
   			
 				JSONObject jsonObject = new JSONObject();
