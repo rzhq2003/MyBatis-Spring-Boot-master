@@ -56,6 +56,7 @@ import tk.mybatis.springboot.service.GroupsService;
 import tk.mybatis.springboot.service.HostsGroupsService;
 import tk.mybatis.springboot.service.HostsService;
 import tk.mybatis.springboot.service.HostsTemplatesService;
+import tk.mybatis.springboot.service.ItemsService;
 import tk.mybatis.springboot.util.MyUtils;
 
 
@@ -92,6 +93,9 @@ public class TemplatesController {
 	
 	@Autowired
 	HttpServletRequest request;
+	
+	@Autowired
+	ItemsService itemsService;
     
     // add update delete view list
     @ApiOperation(value = "模板列表", notes = "模板列表",produces = "application/json")
@@ -230,6 +234,12 @@ public class TemplatesController {
         					hostsTemplatesService.delete(hostsTemplates);
     					}
         			} 
+        			
+        			/*
+        			 * 
+        			 * 主机模板关联后，相应监控项也进行关联
+        			 *         			
+        			*/
     			}
   			
 				JSONObject jsonObject = new JSONObject();
