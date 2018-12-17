@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -47,6 +48,7 @@ import tk.mybatis.springboot.model.Groups;
 import tk.mybatis.springboot.model.Hosts;
 import tk.mybatis.springboot.model.HostsGroups;
 import tk.mybatis.springboot.model.HostsTemplates;
+import tk.mybatis.springboot.model.Items;
 import tk.mybatis.springboot.model.Pages;
 
 import tk.mybatis.springboot.req.TemplatesAddDTO;
@@ -224,15 +226,32 @@ public class TemplatesController {
     				Long[] hostidss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
 		 			Long[] hostids_save = MyUtils.substract(hostids, hostidss); //写入数据
         			Long[] hostids_del = MyUtils.substract(hostidss, hostids); //删除数据    
-        			if (MyUtils.notEmpty(hostids_save)) {
+        			
+        			if (MyUtils.notEmpty(hostids_save)) { 				
+      					
+        				Items items_save = new Items();
+        				items_save.setHostid(templatesUpdateDTO.getHostid());
+        				List<Items> list1 = new ArrayList<Items>();
+        				list1 = itemsService.select(items_save); // 判断下itlist是否为空
         				List<HostsTemplates> htlist = new ArrayList<HostsTemplates>();
         				for (int i = 0; i < hostids_save.length; i++) {
         					HostsTemplates hTemplates = new HostsTemplates();
         					hTemplates.setHostid(hostids_save[i]);
         					hTemplates.setTemplateid(templatesUpdateDTO.getHostid());
-        					htlist.add(hTemplates);
+        					htlist.add(hTemplates);  					
+        					
+        					if (MyUtils.notEmpty(list1)) {
+               					for (int j = 0; j < list1.size(); j++) {
+            						System.out.print("\nj>>>" + j);
+            						list1.get(j).setHostid(hostids_save[i]);
+            						list1.get(j).setTemplateid(list1.get(j).getItemid());
+            						list1.get(j).setName(list1.get(j).getName());
+            					}
+            					System.out.print("\nlist1>>>" + JSONObject.toJSONString(list1));
+            					itemsService.saves(list1);
+        					}
+ 
     					}
-    					System.out.print("hostsTemplates>>>" + JSONObject.toJSONString(htlist));
     					hostsTemplatesService.saves(htlist);
     					
         			}
@@ -241,6 +260,10 @@ public class TemplatesController {
         					hostsTemplates.setHostid(hostids_del[i]);
         					hostsTemplates.setTemplateid(templatesUpdateDTO.getHostid());
         					hostsTemplatesService.delete(hostsTemplates);
+        					Items items_del = new Items();
+        					items_del.setHostid(hostids_del[i]);
+        					itemsService.delete(items_del);
+        					
     					}
         			} 
         			
