@@ -26,6 +26,7 @@ package tk.mybatis.springboot.controller;
 
 
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -37,12 +38,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
+import tk.mybatis.springboot.model.Hosts;
+import tk.mybatis.springboot.model.HostsTemplates;
 import tk.mybatis.springboot.model.Items;
 
 import tk.mybatis.springboot.req.ItemsAddDTO;
@@ -50,6 +53,10 @@ import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.HostsService;
 import tk.mybatis.springboot.service.HostsTemplatesService;
 import tk.mybatis.springboot.service.ItemsService;
+import tk.mybatis.springboot.util.MyUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -102,10 +109,32 @@ public class ItemsController {
 			if (itemsAddDTO.getName() != null && itemsAddDTO.getHostid() != null) {
 				Items items = new Items();
 				BeanUtils.copyProperties(itemsAddDTO, items);
-				// itemsService.save(items);
+				itemsService.save(items);
+				Hosts hosts = new Hosts();				
+				hosts = hostsService.getById(itemsAddDTO.getHostid());
+				if (hosts.getStatus() == 3) {
+					System.out.print("当前为模板监控项,添加相关联主机监控\n");
+					HostsTemplates hostsTemplates = new HostsTemplates();
+					hostsTemplates.setTemplateid(items.getHostid());
+					String str = hostsTemplatesService.getBy(hostsTemplates, "hostid");
+					Long[] hostids= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
+					List<Items> list = new ArrayList<Items>();
+					for (int i = 0; i < hostids.length; i++) {
+						Items itemss = new Items();
+						itemss.setHostid(hostids[i]);
+						itemss.setName(itemsAddDTO.getName());
+						itemss.setTemplateid(items.getItemid());
+						itemss.setDescription(itemsAddDTO.getDescription());
+						itemss.setEnable(0);
+						list.add(itemss);
+						System.out.print(JSONObject.toJSONString(itemss));
+					}
+					itemsService.saves(list);
+				}
 				
-				
-				return new ResObject();
+				JSONObject jsonObject = new JSONObject(true);
+				jsonObject.put("itemid", items.getItemid());
+				return new ResObject(200, jsonObject);
 			} else {
 				return new ResObject(400, "name或hostid不能为空");
 			}

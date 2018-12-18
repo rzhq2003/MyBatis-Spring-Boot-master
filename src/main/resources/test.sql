@@ -128,6 +128,7 @@ CREATE TABLE `items` (
   `itemid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `hostid` bigint(20) unsigned NOT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
+  `description` varchar(255) NOT NULL DEFAULT '',
   `templateid` bigint(20) unsigned DEFAULT NULL COMMENT '对应本表模板itemid',
   `enable` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`itemid`),

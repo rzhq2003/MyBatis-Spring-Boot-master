@@ -31,6 +31,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -231,24 +232,24 @@ public class TemplatesController {
       					
         				Items items_save = new Items();
         				items_save.setHostid(templatesUpdateDTO.getHostid());
-        				List<Items> list1 = new ArrayList<Items>();
-        				list1 = itemsService.select(items_save); // 判断下itlist是否为空
+        				List<Items> list = new ArrayList<Items>();
+        				list = itemsService.select(items_save); // 判断下itlist是否为空
+
         				List<HostsTemplates> htlist = new ArrayList<HostsTemplates>();
         				for (int i = 0; i < hostids_save.length; i++) {
         					HostsTemplates hTemplates = new HostsTemplates();
         					hTemplates.setHostid(hostids_save[i]);
         					hTemplates.setTemplateid(templatesUpdateDTO.getHostid());
         					htlist.add(hTemplates);  					
-        					
-        					if (MyUtils.notEmpty(list1)) {
-               					for (int j = 0; j < list1.size(); j++) {
+        			
+        					if (MyUtils.notEmpty(list)) {
+               					for (int j = 0; j < list.size(); j++) {
             						System.out.print("\nj>>>" + j);
-            						list1.get(j).setHostid(hostids_save[i]);
-            						list1.get(j).setTemplateid(list1.get(j).getItemid());
-            						list1.get(j).setName(list1.get(j).getName());
+            						list.get(j).setHostid(hostids_save[i]);
+            						list.get(j).setTemplateid(list.get(j).getItemid());
+            						list.get(j).setName(list.get(j).getName());
             					}
-            					System.out.print("\nlist1>>>" + JSONObject.toJSONString(list1));
-            					itemsService.saves(list1);
+            					itemsService.saves(list);
         					}
  
     					}

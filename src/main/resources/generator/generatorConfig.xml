@@ -32,13 +32,13 @@
         <javaModelGenerator targetPackage="${targetModelPackage}" targetProject="${targetJavaProject}">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
-            <property name="rootClass" value="tk.mybatis.springboot.model.BaseEntity" />
+            <property name="rootClass" value="tk.mybatis.springboot.model.Pages" />
         </javaModelGenerator>
 
-        <!-- 生成映射文件存放位置 -->
-        <sqlMapGenerator targetPackage="${targetXMLPackage}"  targetProject="${targetResourcesProject}">
-            <property name="enableSubPackages" value="true"/>
-        </sqlMapGenerator>
+<!--         生成映射文件存放位置 -->
+<!--         <sqlMapGenerator targetPackage="${targetXMLPackage}"  targetProject="${targetResourcesProject}"> -->
+<!--             <property name="enableSubPackages" value="true"/> -->
+<!--         </sqlMapGenerator> -->
 
         <!-- 生成Dao类存放位置 -->
         <!-- 客户端代码，生成易于使用的针对Model对象和XML配置文件 的代码
@@ -48,13 +48,13 @@
         
 
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="${targetMapperPackage}"  targetProject="${targetJavaProject}">
-            <property name="enableSubPackages" value="true"/>
-        </javaClientGenerator>
+<!--         <javaClientGenerator type="XMLMAPPER" targetPackage="${targetMapperPackage}"  targetProject="${targetJavaProject}"> -->
+<!--             <property name="enableSubPackages" value="true"/> -->
+<!--         </javaClientGenerator> -->
 
 
 		
-        <table tableName="%" 
+        <table tableName="items" 
         	enableCountByExample="false" 
         	enableUpdateByExample="false" 
         	enableDeleteByExample="false" 

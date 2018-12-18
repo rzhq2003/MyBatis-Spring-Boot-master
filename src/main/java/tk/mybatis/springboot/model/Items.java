@@ -12,6 +12,8 @@ public class Items extends Pages {
 
     private String name;
 
+    private String description;
+
     /**
      * 对应本表模板itemid
      */
@@ -59,6 +61,20 @@ public class Items extends Pages {
      */
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    /**
+     * @return description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description
+     */
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
     }
 
     /**
