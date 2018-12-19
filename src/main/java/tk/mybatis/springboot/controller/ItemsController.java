@@ -55,8 +55,6 @@ import tk.mybatis.springboot.service.HostsTemplatesService;
 import tk.mybatis.springboot.service.ItemsService;
 import tk.mybatis.springboot.util.MyUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -117,20 +115,18 @@ public class ItemsController {
 					HostsTemplates hostsTemplates = new HostsTemplates();
 					hostsTemplates.setTemplateid(items.getHostid());
 					String str = hostsTemplatesService.getBy(hostsTemplates, "hostid");
-					Long[] hostids= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
-					List<Items> list = new ArrayList<Items>();
-					for (int i = 0; i < hostids.length; i++) {
-						Items itemss = new Items();
-						itemss.setHostid(hostids[i]);
-						itemss.setName(itemsAddDTO.getName());
-						itemss.setTemplateid(items.getItemid());
-						itemss.setDescription(itemsAddDTO.getDescription());
-						itemss.setEnable(0);
-						list.add(itemss);
-						System.out.print(JSONObject.toJSONString(itemss));
+					if (MyUtils.isNotEmpty(str)) {
+						Long[] hostids= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
+						for (int i = 0; i < hostids.length; i++) {
+							Items itemss = new Items();
+							BeanUtils.copyProperties(itemsAddDTO, itemss);
+							itemss.setHostid(hostids[i]);
+							itemss.setTemplateid(items.getItemid());
+							itemsService.save(itemss);
+						}						
 					}
-					itemsService.saves(list);
-				}
+					}
+
 				
 				JSONObject jsonObject = new JSONObject(true);
 				jsonObject.put("itemid", items.getItemid());

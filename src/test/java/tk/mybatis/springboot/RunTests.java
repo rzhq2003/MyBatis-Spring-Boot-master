@@ -37,6 +37,7 @@ public class RunTests {
 			list.get(i).setHostid(1l);
 			list.get(i).setTemplateid(list.get(i).getItemid());
 			list.get(i).setItemid(null);
+			list.get(i).setDescription(null);
 		}
 		itemsService.saves(list);
 		System.out.print(JSONObject.toJSONString(list));
