@@ -33,6 +33,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,8 +48,10 @@ import io.swagger.annotations.ApiOperation;
 import tk.mybatis.springboot.model.Hosts;
 import tk.mybatis.springboot.model.HostsTemplates;
 import tk.mybatis.springboot.model.Items;
-
+import tk.mybatis.springboot.model.Pages;
 import tk.mybatis.springboot.req.ItemsAddDTO;
+import tk.mybatis.springboot.req.ItemsUpdateDTO;
+
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.HostsService;
 import tk.mybatis.springboot.service.HostsTemplatesService;
@@ -84,15 +87,27 @@ public class ItemsController {
 	
 	@Autowired
 	HostsTemplatesService hostsTemplatesService;
-	
+
 	
     // 获取用户列表
+    @ApiOperation(value = "监控项列表", notes = "监控项列表",produces = "application/json")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
+    	})
+    @RequestMapping(value = "", method = RequestMethod.GET)//接口基本路径
+    @PreAuthorize("hasRole('ADMIN')")
+    // json格式传递对象使用RequestBody注解
+    public ResObject getAll(Pages pages) {       
+    	return new ResObject(200, itemsService.getAll(pages));
+    }
+	
+
 	@ApiOperation(value = "监控项创建", notes = "监控项创建",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
     @RequestMapping(value = "/add", method = RequestMethod.POST)//接口基本路径
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     // json格式传递对象使用RequestBody注解
     @Transactional(rollbackOn = Exception.class)
     public ResObject add(@RequestBody ItemsAddDTO itemsAddDTO) {
@@ -125,9 +140,7 @@ public class ItemsController {
 							itemsService.save(itemss);
 						}						
 					}
-					}
-
-				
+					}			
 				JSONObject jsonObject = new JSONObject(true);
 				jsonObject.put("itemid", items.getItemid());
 				return new ResObject(200, jsonObject);
@@ -141,8 +154,83 @@ public class ItemsController {
 		}
 		
 	}
+	
+    // 获取用户列表
+	@ApiOperation(value = "监控项更新", notes = "监控项更新",produces = "application/json")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
+    	})
+    @RequestMapping(value = "/update", method = RequestMethod.POST)//接口基本路径
+    @PreAuthorize("hasRole('ADMIN')")
+    // json格式传递对象使用RequestBody注解
+    @Transactional(rollbackOn = Exception.class)
+    public ResObject update(@RequestBody ItemsUpdateDTO itemsUpdateDTO) {
+    	try {
+    		/*
+    		 * 监控模板资料更改相关联监控也更改 name description enable
+    		 * 
+    		 */
+    		if (MyUtils.notEmpty(itemsUpdateDTO.getItemid())) {
+    			Items items = new Items();
+    			items.setTemplateid(itemsUpdateDTO.getItemid());
+    			String str = itemsService.getIds(items);
+    			items.setTemplateid(null);
+    			if (str.length() != 0) {
+    				str = str.concat("," + itemsUpdateDTO.getItemid().toString());
+    			} else {
+					str = itemsUpdateDTO.getItemid().toString();
+				}
+    			Long[] itemids= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
+    			for (int i = 0; i < itemids.length; i++) {
+    				BeanUtils.copyProperties(itemsUpdateDTO, items);
+    				items.setItemid(itemids[i]);
+    				itemsService.updateById(items);
+				}
+    			JSONObject jsonObject = new JSONObject(true);
+    			jsonObject.put("itemids", itemids);
+    			return new ResObject(200, jsonObject);
+    		} else {
+    			return new ResObject(400, "itemid不能为空");
+    		}
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
+	        return new ResObject(400, "操作异常");
+		}
+    }
     
-
+    @ApiOperation(value = "监控项删除", notes = "监控项删除", produces = "application/json")
+    @RequestMapping(value = "/delete/{ids}", method = RequestMethod.DELETE)
+    @ApiImplicitParams({ 
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
+    	@ApiImplicitParam(name = "ids", value = "监控项id逗号分隔，如1,2,3", required = true, dataType = "String", paramType = "path") 
+    	})
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResObject delete(@PathVariable String ids) {
+    		itemsService.deleteByIds(ids);
+    		JSONObject jsonObject = new JSONObject();
+    		jsonObject.put("itemids", ids);
+    		return new ResObject(200,jsonObject);
+    }
+    
+    @ApiOperation(value = "监控项详情", notes = "监控项详情",produces = "application/json")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
+    	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
+    	})
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResObject view(@PathVariable Long id) {
+    	try {
+    		JSONObject jsonObject = new JSONObject(true);
+            Items items = itemsService.getById(id);
+            jsonObject.put("items",items); 
+            return new ResObject(200, jsonObject);
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+			return new ResObject(400, "操作异常"); 
+		}
+    }
 
 }
 
