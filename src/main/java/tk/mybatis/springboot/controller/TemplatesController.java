@@ -244,7 +244,6 @@ public class TemplatesController {
         			
         					if (MyUtils.notEmpty(list)) {
                					for (int j = 0; j < list.size(); j++) {
-            						System.out.print("\nj>>>" + j);
             						list.get(j).setHostid(hostids_save[i]);
             						list.get(j).setTemplateid(list.get(j).getItemid());
             						list.get(j).setName(list.get(j).getName());
@@ -266,15 +265,8 @@ public class TemplatesController {
         					itemsService.delete(items_del);
         					
     					}
-        			} 
-        			
-        			/*
-        			 * 
-        			 * 主机模板关联后，相应监控项也进行关联
-        			 *         			
-        			*/
-        			
-        			
+        			}  			
+        		       			
     			}
   			
 				JSONObject jsonObject = new JSONObject();
