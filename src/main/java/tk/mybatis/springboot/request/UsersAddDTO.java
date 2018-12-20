@@ -1,4 +1,4 @@
-package tk.mybatis.springboot.req;
+package tk.mybatis.springboot.request;
 
 
 import java.util.List;

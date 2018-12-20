@@ -45,7 +45,7 @@ import tk.mybatis.springboot.model.Pages;
 import tk.mybatis.springboot.model.Users;
 import tk.mybatis.springboot.model.UsersGroups;
 import tk.mybatis.springboot.model.Usrgrp;
-import tk.mybatis.springboot.req.UsersUpdateDTO;
+import tk.mybatis.springboot.request.UsersUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.UsersGroupsService;
 import tk.mybatis.springboot.service.UsersService;

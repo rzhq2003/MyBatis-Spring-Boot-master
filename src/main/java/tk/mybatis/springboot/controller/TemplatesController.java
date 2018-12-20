@@ -51,9 +51,8 @@ import tk.mybatis.springboot.model.HostsGroups;
 import tk.mybatis.springboot.model.HostsTemplates;
 import tk.mybatis.springboot.model.Items;
 import tk.mybatis.springboot.model.Pages;
-
-import tk.mybatis.springboot.req.TemplatesAddDTO;
-import tk.mybatis.springboot.req.TemplatesUpdateDTO;
+import tk.mybatis.springboot.request.TemplatesAddDTO;
+import tk.mybatis.springboot.request.TemplatesUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.GroupsService;
 import tk.mybatis.springboot.service.HostsGroupsService;

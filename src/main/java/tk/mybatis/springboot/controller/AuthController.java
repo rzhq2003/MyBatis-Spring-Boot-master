@@ -19,7 +19,7 @@ import tk.mybatis.springboot.model.LoginUser;
 
 import tk.mybatis.springboot.model.Users;
 import tk.mybatis.springboot.model.UsersGroups;
-import tk.mybatis.springboot.req.UsersAddDTO;
+import tk.mybatis.springboot.request.UsersAddDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.UsersGroupsService;
 import tk.mybatis.springboot.service.UsersService;

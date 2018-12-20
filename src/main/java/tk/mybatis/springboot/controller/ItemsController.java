@@ -49,9 +49,8 @@ import tk.mybatis.springboot.model.Hosts;
 import tk.mybatis.springboot.model.HostsTemplates;
 import tk.mybatis.springboot.model.Items;
 import tk.mybatis.springboot.model.Pages;
-import tk.mybatis.springboot.req.ItemsAddDTO;
-import tk.mybatis.springboot.req.ItemsUpdateDTO;
-
+import tk.mybatis.springboot.request.ItemsAddDTO;
+import tk.mybatis.springboot.request.ItemsUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.HostsService;
 import tk.mybatis.springboot.service.HostsTemplatesService;
