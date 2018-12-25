@@ -187,7 +187,7 @@ public class UsrgrpController {
     			if (userids != null) {
         			UsersGroups usersGroups = new UsersGroups();
         			usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
-        			String str = usersGroupsService.getBy(usersGroups, "userid");
+        			String str = usersGroupsService.getByValues(usersGroups, "userid");
         			Long[] useridss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
         			Long[] usersids_save = MyUtils.substract(userids, useridss); //写入数据
         			System.out.print("\nuseridss" + usersids_save);
@@ -218,7 +218,7 @@ public class UsrgrpController {
     			if (groupids != null) {
         			Rights rights = new Rights();
         			rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
-        			String strr = rightsService.getBy(rights, "id");
+        			String strr = rightsService.getByValues(rights, "id");
         			Long[] groupidss= (Long[]) ConvertUtils.convert(strr.split(","), Long.class);
         			Long[] groupids_save = MyUtils.substract(groupids, groupidss); //写入数据
         			Long[] groupids_del = MyUtils.substract(groupidss, groupids); //删除数据
@@ -284,7 +284,7 @@ public class UsrgrpController {
             jsonObject.put("usrgrp",usrgrp);
             UsersGroups usersGroups = new UsersGroups();
             usersGroups.setUsrgrpid(id);
-            String userids = usersGroupsService.getBy(usersGroups, "userid");
+            String userids = usersGroupsService.getByValues(usersGroups, "userid");
             List<Users> list = new ArrayList<Users>();
             if (MyUtils.notEmpty(userids)) {
             	list = usersService.selectByIds(userids);

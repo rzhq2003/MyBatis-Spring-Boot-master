@@ -191,7 +191,7 @@ public class TemplatesController {
     				if (MyUtils.notEmpty(groupids)) {   					
     					HostsGroups hostsGroups = new HostsGroups();
     					hostsGroups.setHostid(templatesUpdateDTO.getHostid());
-    					String str = hostsGroupsService.getBy(hostsGroups, "groupid");
+    					String str = hostsGroupsService.getByValues(hostsGroups, "groupid");
     					Long[] groupidss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
     		 			Long[] groupids_save = MyUtils.substract(groupids, groupidss); //写入数据
             			Long[] groupids_del = MyUtils.substract(groupidss, groupids); //删除数据           			
@@ -222,7 +222,7 @@ public class TemplatesController {
     			if (hostids != null) {
     				HostsTemplates hostsTemplates = new HostsTemplates();
     				hostsTemplates.setTemplateid(templatesUpdateDTO.getHostid());
-    				String str = hostsTemplatesService.getBy(hostsTemplates, "hostid");
+    				String str = hostsTemplatesService.getByValues(hostsTemplates, "hostid");
     				Long[] hostidss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
 		 			Long[] hostids_save = MyUtils.substract(hostids, hostidss); //写入数据
         			Long[] hostids_del = MyUtils.substract(hostidss, hostids); //删除数据    
@@ -296,13 +296,13 @@ public class TemplatesController {
     		
     		HostsGroups hostsGroups = new HostsGroups();
     		hostsGroups.setHostid(id);
-    		String groupsids = hostsGroupsService.getBy(hostsGroups, "groupid");
+    		String groupsids = hostsGroupsService.getByValues(hostsGroups, "groupid");
     		List<Groups> groupslist = new ArrayList<Groups>();
     		groupslist = groupsService.selectByIds(groupsids);
     		
     		HostsTemplates hostsTemplates = new HostsTemplates();
     		hostsTemplates.setTemplateid(id);
-    		String hostsids = hostsTemplatesService.getBy(hostsTemplates, "hostid");
+    		String hostsids = hostsTemplatesService.getByValues(hostsTemplates, "hostid");
     		List<Hosts> hostslist = hostsService.selectByIds(hostsids);
     		
     		jsonObject.put("templates",hosts);

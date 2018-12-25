@@ -46,7 +46,7 @@ public class Pages {
     @Transient
     @JsonIgnore
     @JSONField(serialize = false)
-    private Integer rows = 2;
+    private Integer rows = 10;
 
 
     public Integer getPage() {

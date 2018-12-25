@@ -37,7 +37,8 @@ public class SwaggerConfig {
 				new Tag("user-module-resource", "用户管理")
 				,new Tag("usrgrp-module-resource", "用户组管理")
 				,new Tag("template-module-resource", "模板管理")
-				,new Tag("items-module-resource", "监控项管理")
+				,new Tag("items-module-resource", "参数项管理")
+				,new Tag("history-module-resource", "参数值管理")
 				};
 		return tags;
 	}

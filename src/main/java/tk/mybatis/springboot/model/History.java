@@ -1,75 +1,59 @@
 package tk.mybatis.springboot.model;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-
 public class History extends Pages {
-
     @Id
     @Column(name = "historyid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JSONField(serialize = false) // 结果不被输出
+    @JSONField(serialize = false)
     private Long historyid;
-	
-    private Long itemid;
 
-    private Integer clock;
+    private Long hostid;
 
-    private String value;
-    
+    private String historysn;
 
+    /**
+     * @return historyid
+     */
     public Long getHistoryid() {
-		return historyid;
-	}
-
-	public void setHistoryid(Long historyid) {
-		this.historyid = historyid;
-	}
-
-	/**
-     * @return itemid
-     */
-    public Long getItemid() {
-        return itemid;
+        return historyid;
     }
 
     /**
-     * @param itemid
+     * @param historyid
      */
-    public void setItemid(Long itemid) {
-        this.itemid = itemid;
+    public void setHistoryid(Long historyid) {
+        this.historyid = historyid;
     }
 
     /**
-     * @return clock
+     * @return hostid
      */
-    public Integer getClock() {
-        return clock;
+    public Long getHostid() {
+        return hostid;
     }
 
     /**
-     * @param clock
+     * @param hostid
      */
-    public void setClock(Integer clock) {
-        this.clock = clock;
+    public void setHostid(Long hostid) {
+        this.hostid = hostid;
     }
 
     /**
-     * @return value
+     * @return historysn
      */
-    public String getValue() {
-        return value;
+    public String getHistorysn() {
+        return historysn;
     }
 
     /**
-     * @param value
+     * @param historysn
      */
-    public void setValue(String value) {
-        this.value = value == null ? null : value.trim();
+    public void setHistorysn(String historysn) {
+        this.historysn = historysn == null ? null : historysn.trim();
     }
 }

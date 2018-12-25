@@ -48,7 +48,6 @@ import io.swagger.annotations.ApiOperation;
 import tk.mybatis.springboot.model.Hosts;
 import tk.mybatis.springboot.model.HostsTemplates;
 import tk.mybatis.springboot.model.Items;
-import tk.mybatis.springboot.model.Pages;
 import tk.mybatis.springboot.request.ItemsAddDTO;
 import tk.mybatis.springboot.request.ItemsUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
@@ -89,19 +88,23 @@ public class ItemsController {
 
 	
     // 获取用户列表
-    @ApiOperation(value = "监控项列表", notes = "监控项列表",produces = "application/json")
+    @ApiOperation(value = "参数项列表", notes = "参数项列表",produces = "application/json")
     @ApiImplicitParams({
-    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
+    	@ApiImplicitParam(name = "hostid", required = true, dataType = "Long", paramType = "path")
     	})
-    @RequestMapping(value = "", method = RequestMethod.GET)//接口基本路径
+    @RequestMapping(value = "{hostid}", method = RequestMethod.GET)//接口基本路径
     @PreAuthorize("hasRole('ADMIN')")
     // json格式传递对象使用RequestBody注解
-    public ResObject getAll(Pages pages) {       
-    	return new ResObject(200, itemsService.getAll(pages));
+    public ResObject getBys(@PathVariable Long hostid) {   
+    	System.out.print("hotsid>>>" + hostid);
+    	Items items = new Items();
+    	items.setHostid(hostid);
+    	return new ResObject(200, itemsService.select(items));
     }
 	
 
-	@ApiOperation(value = "监控项创建", notes = "监控项创建",produces = "application/json")
+	@ApiOperation(value = "参数项创建", notes = "参数项创建",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
@@ -114,7 +117,7 @@ public class ItemsController {
 			
 			/*
 			 * 
-			 * 若监控项建立在模板上，则关联到相应主机已建立
+			 * 若参数项建立在模板上，则关联到相应主机已建立
 			 * 若不是模板上，则创建而已
 			 * 
 			*/
@@ -125,10 +128,10 @@ public class ItemsController {
 				Hosts hosts = new Hosts();				
 				hosts = hostsService.getById(itemsAddDTO.getHostid());
 				if (hosts.getStatus() == 3) {
-					System.out.print("当前为模板监控项,添加相关联主机监控\n");
+					System.out.print("当前为模板参数项,添加相关联主机参数\n");
 					HostsTemplates hostsTemplates = new HostsTemplates();
 					hostsTemplates.setTemplateid(items.getHostid());
-					String str = hostsTemplatesService.getBy(hostsTemplates, "hostid");
+					String str = hostsTemplatesService.getByValues(hostsTemplates, "hostid");
 					if (MyUtils.isNotEmpty(str)) {
 						Long[] hostids= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
 						for (int i = 0; i < hostids.length; i++) {
@@ -155,7 +158,7 @@ public class ItemsController {
 	}
 	
     // 获取用户列表
-	@ApiOperation(value = "监控项更新", notes = "监控项更新",produces = "application/json")
+	@ApiOperation(value = "参数项更新", notes = "参数项更新",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
@@ -166,7 +169,7 @@ public class ItemsController {
     public ResObject update(@RequestBody ItemsUpdateDTO itemsUpdateDTO) {
     	try {
     		/*
-    		 * 监控模板资料更改相关联监控也更改 name description enable
+    		 * 参数模板资料更改相关联参数也更改 name description enable
     		 * 
     		 */
     		if (MyUtils.notEmpty(itemsUpdateDTO.getItemid())) {
@@ -198,11 +201,11 @@ public class ItemsController {
 		}
     }
     
-    @ApiOperation(value = "监控项删除", notes = "监控项删除", produces = "application/json")
+    @ApiOperation(value = "参数项删除", notes = "参数项删除", produces = "application/json")
     @RequestMapping(value = "/delete/{ids}", method = RequestMethod.DELETE)
     @ApiImplicitParams({ 
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
-    	@ApiImplicitParam(name = "ids", value = "监控项id逗号分隔，如1,2,3", required = true, dataType = "String", paramType = "path") 
+    	@ApiImplicitParam(name = "ids", value = "参数项id逗号分隔，如1,2,3", required = true, dataType = "String", paramType = "path") 
     	})
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject delete(@PathVariable String ids) {
@@ -212,7 +215,7 @@ public class ItemsController {
     		return new ResObject(200,jsonObject);
     }
     
-    @ApiOperation(value = "监控项详情", notes = "监控项详情",produces = "application/json")
+    @ApiOperation(value = "参数项详情", notes = "参数项详情",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
     	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")

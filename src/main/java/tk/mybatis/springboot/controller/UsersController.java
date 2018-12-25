@@ -116,7 +116,7 @@ public class UsersController {
             jsonObject.put("users",users);
             UsersGroups usersGroups = new UsersGroups();
             usersGroups.setUserid(id);
-            String usrgrpids = UsersGroupsService.getBy(usersGroups, "usrgrpid");
+            String usrgrpids = UsersGroupsService.getByValues(usersGroups, "usrgrpid");
             System.out.print(usrgrpids);
             List<Usrgrp> list = new ArrayList<Usrgrp>();
             list = UsrgrpService.selectByIds(usrgrpids);

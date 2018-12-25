@@ -70,6 +70,26 @@ public abstract class BaseService<T> {
         jsonObject.put("rows", pages.getRows());
         return jsonObject;
     }
+    
+	/**
+	 * 通用分页工具,带条件查询
+	 * 
+	 * @return 返回JSON字符串
+	 */
+    public JSONObject getBys(Pages pages,T model) {
+    	Field[] fields = clazz.getDeclaredFields();
+    	String id = fields[0].getName(); // 取出主键名称
+    	System.out.println("id:::" + id);    	
+        if (pages.getPage() != null && pages.getRows() != null) {
+            PageHelper.startPage(pages.getPage(), pages.getRows(), id);
+        }   
+        List<T> list = myMapper.select(model);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("pageInfo", new PageInfo<T>(list));
+        jsonObject.put("page", pages.getPage());
+        jsonObject.put("rows", pages.getRows());
+        return jsonObject;
+    }
    
     
 	/**
@@ -168,7 +188,7 @@ public abstract class BaseService<T> {
 	 * 
 	 * @return FieldValue
 	 */
-    public String getBy(T model,String FieldName) {
+    public String getByValues(T model,String FieldName) {
     	try {
         	Field f= clazz.getDeclaredField(FieldName);
         	String ids = "";
@@ -189,9 +209,9 @@ public abstract class BaseService<T> {
     }
     
 	/**
-	 * 通过ids条件查找，返回主键字符串如"1,2,3,4"
+	 * 通过ids条件查找，主键字符串如"1,2,3,4"
 	 * 
-	 * @return List
+	 * @return List<T>
 	 */
     public List<T> selectByIds(String ids) {
     	return myMapper.selectByIds(ids);
