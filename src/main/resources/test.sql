@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2018-12-25 14:31:45
+Date: 2018-12-25 17:40:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -48,11 +48,13 @@ CREATE TABLE `history` (
   UNIQUE KEY `historysn` (`historysn`) USING BTREE,
   KEY `hostid` (`hostid`) USING BTREE,
   CONSTRAINT `c_history_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of history
 -- ----------------------------
+INSERT INTO `history` VALUES ('23', '1', '100000001898490491');
+INSERT INTO `history` VALUES ('24', '1', '100000001898490492');
 
 -- ----------------------------
 -- Table structure for `history_items`
@@ -69,11 +71,17 @@ CREATE TABLE `history_items` (
   KEY `historysn` (`historysn`),
   CONSTRAINT ` c_history_items_1` FOREIGN KEY (`itemid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE,
   CONSTRAINT ` c_history_items_2` FOREIGN KEY (`historysn`) REFERENCES `history` (`historysn`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of history_items
 -- ----------------------------
+INSERT INTO `history_items` VALUES ('36', '100000001898490491', '1', '1', '0');
+INSERT INTO `history_items` VALUES ('37', '100000001898490491', '2', '2', '0');
+INSERT INTO `history_items` VALUES ('38', '100000001898490492', '1', '1', '0');
+INSERT INTO `history_items` VALUES ('39', '100000001898490491', '3', '1', '0');
+INSERT INTO `history_items` VALUES ('40', '100000001898490492', '2', '2', '0');
+INSERT INTO `history_items` VALUES ('41', '100000001898490492', '3', '1', '0');
 
 -- ----------------------------
 -- Table structure for `hosts`
