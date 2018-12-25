@@ -49,7 +49,6 @@ import tk.mybatis.springboot.model.Groups;
 import tk.mybatis.springboot.model.Hosts;
 import tk.mybatis.springboot.model.HostsGroups;
 import tk.mybatis.springboot.model.HostsTemplates;
-import tk.mybatis.springboot.model.Items;
 import tk.mybatis.springboot.model.Pages;
 import tk.mybatis.springboot.request.TemplatesAddDTO;
 import tk.mybatis.springboot.request.TemplatesUpdateDTO;
@@ -58,7 +57,7 @@ import tk.mybatis.springboot.service.GroupsService;
 import tk.mybatis.springboot.service.HostsGroupsService;
 import tk.mybatis.springboot.service.HostsService;
 import tk.mybatis.springboot.service.HostsTemplatesService;
-import tk.mybatis.springboot.service.ItemsService;
+
 import tk.mybatis.springboot.util.MyUtils;
 
 
@@ -95,9 +94,7 @@ public class TemplatesController {
 	
 	@Autowired
 	HttpServletRequest request;
-	
-	@Autowired
-	ItemsService itemsService;
+
     
     // add update delete view list
     @ApiOperation(value = "模板列表", notes = "模板列表",produces = "application/json")
@@ -229,28 +226,13 @@ public class TemplatesController {
         			
         			if (MyUtils.notEmpty(hostids_save)) { 				
       					
-        				Items items_save = new Items();
-        				items_save.setHostid(templatesUpdateDTO.getHostid());
-        				List<Items> list = new ArrayList<Items>();
-        				list = itemsService.select(items_save); // 判断下itlist是否为空
-
-        				List<HostsTemplates> htlist = new ArrayList<HostsTemplates>();
+           				List<HostsTemplates> htlist = new ArrayList<HostsTemplates>();
         				for (int i = 0; i < hostids_save.length; i++) {
         					HostsTemplates hTemplates = new HostsTemplates();
         					hTemplates.setHostid(hostids_save[i]);
         					hTemplates.setTemplateid(templatesUpdateDTO.getHostid());
         					htlist.add(hTemplates);  					
-        			
-        					if (MyUtils.notEmpty(list)) {
-               					for (int j = 0; j < list.size(); j++) {
-            						list.get(j).setHostid(hostids_save[i]);
-            						list.get(j).setTemplateid(list.get(j).getItemid());
-            						list.get(j).setName(list.get(j).getName());
-            					}
-            					itemsService.saves(list);
-        					}
- 
-    					}
+     					}
     					hostsTemplatesService.saves(htlist);
     					
         			}
@@ -258,11 +240,7 @@ public class TemplatesController {
         				for (int i = 0; i < hostids_del.length; i++) {
         					hostsTemplates.setHostid(hostids_del[i]);
         					hostsTemplates.setTemplateid(templatesUpdateDTO.getHostid());
-        					hostsTemplatesService.delete(hostsTemplates);
-        					Items items_del = new Items();
-        					items_del.setHostid(hostids_del[i]);
-        					itemsService.delete(items_del);
-        					
+        					hostsTemplatesService.delete(hostsTemplates);       					
     					}
         			}  			
         		       			

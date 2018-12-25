@@ -13,7 +13,7 @@ public class History extends Pages {
 
     private Long hostid;
 
-    private String historysn;
+    private String sheetid;
 
     /**
      * @return historyid
@@ -44,16 +44,16 @@ public class History extends Pages {
     }
 
     /**
-     * @return historysn
+     * @return sheetid
      */
-    public String getHistorysn() {
-        return historysn;
+    public String getsheetid() {
+        return sheetid;
     }
 
     /**
-     * @param historysn
+     * @param sheetid
      */
-    public void setHistorysn(String historysn) {
-        this.historysn = historysn == null ? null : historysn.trim();
+    public void setsheetid(String sheetid) {
+        this.sheetid = sheetid == null ? null : sheetid.trim();
     }
 }

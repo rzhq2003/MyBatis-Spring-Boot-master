@@ -38,15 +38,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import tk.mybatis.springboot.model.History;
+
 import tk.mybatis.springboot.model.Pages;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.HistoryService;
@@ -54,7 +52,6 @@ import tk.mybatis.springboot.service.HostsService;
 import tk.mybatis.springboot.service.HostsTemplatesService;
 import tk.mybatis.springboot.service.ItemsService;
 
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 

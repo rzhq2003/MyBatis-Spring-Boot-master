@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2018-12-25 17:40:41
+Date: 2018-12-25 21:00:51
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -43,10 +43,10 @@ DROP TABLE IF EXISTS `history`;
 CREATE TABLE `history` (
   `historyid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `hostid` bigint(20) unsigned NOT NULL,
-  `historysn` varchar(18) NOT NULL DEFAULT '',
+  `sheetid` varchar(18) NOT NULL DEFAULT '',
   PRIMARY KEY (`historyid`),
-  UNIQUE KEY `historysn` (`historysn`) USING BTREE,
-  KEY `hostid` (`hostid`) USING BTREE,
+  UNIQUE KEY `history_1` (`sheetid`) USING BTREE,
+  KEY `history_2` (`hostid`) USING BTREE,
   CONSTRAINT `c_history_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
@@ -62,26 +62,26 @@ INSERT INTO `history` VALUES ('24', '1', '100000001898490492');
 DROP TABLE IF EXISTS `history_items`;
 CREATE TABLE `history_items` (
   `historyitemid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `historysn` varchar(18) NOT NULL DEFAULT '',
+  `sheetid` varchar(18) NOT NULL DEFAULT '',
   `itemid` bigint(20) unsigned NOT NULL,
   `value` varchar(255) NOT NULL DEFAULT '',
   `clock` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`historyitemid`),
   KEY `history_items_1` (`itemid`,`clock`) USING BTREE,
-  KEY `historysn` (`historysn`),
-  CONSTRAINT ` c_history_items_1` FOREIGN KEY (`itemid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE,
-  CONSTRAINT ` c_history_items_2` FOREIGN KEY (`historysn`) REFERENCES `history` (`historysn`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+  KEY `history_items_2` (`sheetid`) USING BTREE,
+  CONSTRAINT `c_history_items_2` FOREIGN KEY (`sheetid`) REFERENCES `history` (`sheetid`) ON DELETE CASCADE,
+  CONSTRAINT ` c_history_items_1` FOREIGN KEY (`itemid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of history_items
 -- ----------------------------
-INSERT INTO `history_items` VALUES ('36', '100000001898490491', '1', '1', '0');
-INSERT INTO `history_items` VALUES ('37', '100000001898490491', '2', '2', '0');
-INSERT INTO `history_items` VALUES ('38', '100000001898490492', '1', '1', '0');
-INSERT INTO `history_items` VALUES ('39', '100000001898490491', '3', '1', '0');
-INSERT INTO `history_items` VALUES ('40', '100000001898490492', '2', '2', '0');
-INSERT INTO `history_items` VALUES ('41', '100000001898490492', '3', '1', '0');
+INSERT INTO `history_items` VALUES ('42', '100000001898490491', '1', '10.4.3.1', '0');
+INSERT INTO `history_items` VALUES ('43', '100000001898490491', '2', '3', '0');
+INSERT INTO `history_items` VALUES ('44', '100000001898490491', '3', '4', '0');
+INSERT INTO `history_items` VALUES ('45', '100000001898490492', '1', '10.4.4.3', '0');
+INSERT INTO `history_items` VALUES ('46', '100000001898490492', '2', '4', '0');
+INSERT INTO `history_items` VALUES ('47', '100000001898490492', '3', '5', '0');
 
 -- ----------------------------
 -- Table structure for `hosts`
@@ -101,7 +101,7 @@ CREATE TABLE `hosts` (
   KEY `hosts_3` (`name`),
   KEY `c_hosts_1` (`templateid`),
   CONSTRAINT `c_hosts_1` FOREIGN KEY (`templateid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of hosts
@@ -123,7 +123,7 @@ CREATE TABLE `hosts_groups` (
   KEY `hosts_groups_2` (`groupid`),
   CONSTRAINT `c_hosts_groups_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE,
   CONSTRAINT `c_hosts_groups_2` FOREIGN KEY (`groupid`) REFERENCES `groups` (`groupid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of hosts_groups
@@ -167,9 +167,9 @@ CREATE TABLE `items` (
   UNIQUE KEY `items_1` (`hostid`,`name`) USING BTREE,
   KEY `items_2` (`enable`),
   KEY `items_3` (`templateid`),
-  CONSTRAINT `c_items_2` FOREIGN KEY (`templateid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE,
-  CONSTRAINT `c_items_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+  CONSTRAINT `c_items_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE,
+  CONSTRAINT `c_items_2` FOREIGN KEY (`templateid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of items

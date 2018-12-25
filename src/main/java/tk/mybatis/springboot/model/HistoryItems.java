@@ -12,7 +12,7 @@ public class HistoryItems extends Pages {
     @JSONField(serialize = false)
     private Long historyitemid;
 
-    private String historysn;
+    private String sheetid;
 
     private Long itemid;
 
@@ -35,17 +35,17 @@ public class HistoryItems extends Pages {
     }
 
     /**
-     * @return historysn
+     * @return sheetid
      */
-    public String getHistorysn() {
-        return historysn;
+    public String getsheetid() {
+        return sheetid;
     }
 
     /**
-     * @param historysn
+     * @param sheetid
      */
-    public void setHistorysn(String historysn) {
-        this.historysn = historysn == null ? null : historysn.trim();
+    public void setsheetid(String sheetid) {
+        this.sheetid = sheetid == null ? null : sheetid.trim();
     }
 
     /**
