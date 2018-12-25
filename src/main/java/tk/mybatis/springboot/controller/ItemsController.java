@@ -26,7 +26,7 @@ package tk.mybatis.springboot.controller;
 
 
 
-import org.apache.commons.beanutils.ConvertUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -46,7 +46,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import tk.mybatis.springboot.model.Hosts;
-import tk.mybatis.springboot.model.HostsTemplates;
+
 import tk.mybatis.springboot.model.Items;
 import tk.mybatis.springboot.request.ItemsAddDTO;
 import tk.mybatis.springboot.request.ItemsUpdateDTO;
@@ -115,37 +115,19 @@ public class ItemsController {
     public ResObject add(@RequestBody ItemsAddDTO itemsAddDTO) {
 		try {
 			
-			/*
-			 * 
-			 * 若参数项建立在模板上，则关联到相应主机已建立
-			 * 若不是模板上，则创建而已
-			 * 
-			*/
 			if (itemsAddDTO.getName() != null && itemsAddDTO.getHostid() != null) {
-				Items items = new Items();
-				BeanUtils.copyProperties(itemsAddDTO, items);
-				itemsService.save(items);
 				Hosts hosts = new Hosts();				
 				hosts = hostsService.getById(itemsAddDTO.getHostid());
 				if (hosts.getStatus() == 3) {
-					System.out.print("当前为模板参数项,添加相关联主机参数\n");
-					HostsTemplates hostsTemplates = new HostsTemplates();
-					hostsTemplates.setTemplateid(items.getHostid());
-					String str = hostsTemplatesService.getByValues(hostsTemplates, "hostid");
-					if (MyUtils.isNotEmpty(str)) {
-						Long[] hostids= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
-						for (int i = 0; i < hostids.length; i++) {
-							Items itemss = new Items();
-							BeanUtils.copyProperties(itemsAddDTO, itemss);
-							itemss.setHostid(hostids[i]);
-							itemss.setTemplateid(items.getItemid());
-							itemsService.save(itemss);
-						}						
-					}
-					}			
-				JSONObject jsonObject = new JSONObject(true);
-				jsonObject.put("itemid", items.getItemid());
-				return new ResObject(200, jsonObject);
+					Items items = new Items();
+					BeanUtils.copyProperties(itemsAddDTO, items);
+					itemsService.save(items);
+					JSONObject jsonObject = new JSONObject(true);
+					jsonObject.put("itemid", items.getItemid());
+					return new ResObject(200, jsonObject);
+				} else {
+					return new ResObject(400, "hostid传入错误");
+				}			
 			} else {
 				return new ResObject(400, "name或hostid不能为空");
 			}
@@ -174,22 +156,10 @@ public class ItemsController {
     		 */
     		if (MyUtils.notEmpty(itemsUpdateDTO.getItemid())) {
     			Items items = new Items();
-    			items.setTemplateid(itemsUpdateDTO.getItemid());
-    			String str = itemsService.getIds(items);
-    			items.setTemplateid(null);
-    			if (str.length() != 0) {
-    				str = str.concat("," + itemsUpdateDTO.getItemid().toString());
-    			} else {
-					str = itemsUpdateDTO.getItemid().toString();
-				}
-    			Long[] itemids= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
-    			for (int i = 0; i < itemids.length; i++) {
-    				BeanUtils.copyProperties(itemsUpdateDTO, items);
-    				items.setItemid(itemids[i]);
-    				itemsService.updateById(items);
-				}
+    			BeanUtils.copyProperties(itemsUpdateDTO, items);
+				itemsService.updateById(items);
     			JSONObject jsonObject = new JSONObject(true);
-    			jsonObject.put("itemids", itemids);
+    			jsonObject.put("itemid", items.getItemid());
     			return new ResObject(200, jsonObject);
     		} else {
     			return new ResObject(400, "itemid不能为空");
