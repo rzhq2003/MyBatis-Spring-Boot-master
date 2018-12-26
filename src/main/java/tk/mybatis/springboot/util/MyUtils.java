@@ -1,10 +1,17 @@
 package tk.mybatis.springboot.util;
 
 import java.util.Collection;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -144,7 +151,6 @@ public class MyUtils {
 	public static boolean notEmpty(Object o) {
 		return o != null && !"".equals(o) && !"null".equals(o);
 	}
-	
 
 	// 并集（set唯一性）
 	public static Long[] union(Long[] a1, Long[] a2) {
@@ -241,22 +247,40 @@ public class MyUtils {
 		String[] result = {};
 		return list.toArray(result);
 	}
-	
+
 	/*
 	 * 
 	 * 通过UUID生成16位唯一订单号
 	 * 
-	*/
-    public static String getOrderIdByUUId() {
-        int machineId = 1;//最大支持1-9个集群机器部署
-        int hashCodeV = UUID.randomUUID().toString().hashCode();
-        if(hashCodeV < 0) {//有可能是负数
-            hashCodeV = - hashCodeV;
-        }
-        // 0 代表前面补充0     
-        // 4 代表长度为4     
-        // d 代表参数为正数型
-        return machineId + String.format("%017d", hashCodeV);
-    }
-	
+	 */
+	public static String getOrderIdByUUId() {
+		int machineId = 1;// 最大支持1-9个集群机器部署
+		int hashCodeV = UUID.randomUUID().toString().hashCode();
+		if (hashCodeV < 0) {// 有可能是负数
+			hashCodeV = -hashCodeV;
+		}
+		// 0 代表前面补充0
+		// 4 代表长度为4
+		// d 代表参数为正数型
+		return machineId + String.format("%017d", hashCodeV);
+	}
+
+	// 将jsonArray字符串转换成List集合
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static List jsonToList(String json, Class beanClass) {
+		if (!StringUtils.isBlank(json)) {
+			// 这里的JSONObject引入的是 com.alibaba.fastjson.JSONObject;
+			return JSONObject.parseArray(json, beanClass);
+		} else {
+			return null;
+		}
+	}
+
+	// List集合转换为json
+	@SuppressWarnings("rawtypes")
+	public static JSON listToJson(List list) {
+		JSON json = (JSON) JSON.toJSON(list);
+		return json;
+	}
+
 }

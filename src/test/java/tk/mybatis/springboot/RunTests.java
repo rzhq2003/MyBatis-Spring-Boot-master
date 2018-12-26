@@ -1,7 +1,9 @@
 package tk.mybatis.springboot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,31 +59,30 @@ public class RunTests {
 		 *
 		 * 如传入hostid,返回为{参数项1:参数值1, 参数项2:参数值2, 参数项3:参数值3}
 		 * 
-		*/
+		*/		
 		
-		JSONArray jsonArray = new JSONArray();
 		History history = new History();
-		history.setHostid(2l);
+		history.setHostid(1l);
 		List<History> list = new ArrayList<History>();
 		list = historyMapper.select(history);
-		System.out.println(JSONObject.toJSONString(list));
+		List<Map<String, Object>> listMap = new ArrayList<Map<String,Object>>();
 		for (int i = 0; i < list.size(); i++) {
-			JSONObject jsonObject = new JSONObject();
+			Map<String, Object> map = new HashMap<String, Object>();
 			HistoryItems historyItems = new HistoryItems();
 			historyItems.setsheetid(list.get(i).getSheetid());
 			List<HistoryItems> list1 = new ArrayList<HistoryItems>();
 			list1 = historyItemsMapper.select(historyItems);
-			System.out.println(JSONObject.toJSONString(list1));
-			jsonObject.put("hostid", list.get(i).getHostid());
-			jsonObject.put("sheetid", list.get(i).getSheetid());
+			map.put("hostid", list.get(i).getHostid());
+			map.put("sheetid", list.get(i).getSheetid());
 			for (int j = 0; j < list1.size(); j++) {
 				Items items = new Items();
 				items = itemsMapper.selectByPrimaryKey(list1.get(j).getItemid());
-				jsonObject.put(items.getItemid().toString(), list1.get(j).getValue());	
+				map.put(items.getItemid().toString(), list1.get(j).getValue());	
 			}
-			jsonArray.add(jsonObject);		
+			listMap.add(map);
 		}
-			System.out.println(JSONObject.toJSONString(jsonArray));
-		}
+		
+		System.out.println(JSONObject.toJSONString(listMap));
+	}
 
 }
