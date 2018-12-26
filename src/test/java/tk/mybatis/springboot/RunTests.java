@@ -64,22 +64,24 @@ public class RunTests {
 		history.setHostid(2l);
 		List<History> list = new ArrayList<History>();
 		list = historyMapper.select(history);
+		System.out.println(JSONObject.toJSONString(list));
 		for (int i = 0; i < list.size(); i++) {
 			JSONObject jsonObject = new JSONObject();
 			HistoryItems historyItems = new HistoryItems();
-			historyItems.setsheetid(list.get(i).getsheetid());
+			historyItems.setsheetid(list.get(i).getSheetid());
 			List<HistoryItems> list1 = new ArrayList<HistoryItems>();
 			list1 = historyItemsMapper.select(historyItems);
+			System.out.println(JSONObject.toJSONString(list1));
 			jsonObject.put("hostid", list.get(i).getHostid());
-			jsonObject.put("sheetid", list.get(i).getsheetid());
+			jsonObject.put("sheetid", list.get(i).getSheetid());
 			for (int j = 0; j < list1.size(); j++) {
 				Items items = new Items();
 				items = itemsMapper.selectByPrimaryKey(list1.get(j).getItemid());
 				jsonObject.put(items.getItemid().toString(), list1.get(j).getValue());	
 			}
 			jsonArray.add(jsonObject);		
-	}
-		System.out.println(JSONObject.toJSONString(jsonArray));
-	}
+		}
+			System.out.println(JSONObject.toJSONString(jsonArray));
+		}
 
 }

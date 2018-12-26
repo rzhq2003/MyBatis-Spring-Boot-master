@@ -2,6 +2,8 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class Items extends Pages {
     @Id
     @Column(name = "itemid")
@@ -17,6 +19,7 @@ public class Items extends Pages {
     /**
      * 对应本表模板itemid
      */
+    @JSONField(serialize = false)
     private Long templateid;
 
     private Integer enable;

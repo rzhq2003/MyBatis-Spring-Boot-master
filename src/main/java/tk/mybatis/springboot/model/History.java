@@ -46,14 +46,14 @@ public class History extends Pages {
     /**
      * @return sheetid
      */
-    public String getsheetid() {
+    public String getSheetid() {
         return sheetid;
     }
 
     /**
      * @param sheetid
      */
-    public void setsheetid(String sheetid) {
+    public void setSheetid(String sheetid) {
         this.sheetid = sheetid == null ? null : sheetid.trim();
     }
 }

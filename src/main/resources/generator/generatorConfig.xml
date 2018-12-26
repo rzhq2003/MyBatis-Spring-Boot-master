@@ -54,7 +54,7 @@
 
 
 		
-        <table tableName="history_items" 
+        <table tableName="history" 
         	enableCountByExample="false" 
         	enableUpdateByExample="false" 
         	enableDeleteByExample="false" 

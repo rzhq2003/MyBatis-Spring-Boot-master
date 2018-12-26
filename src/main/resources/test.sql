@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2018-12-25 21:00:51
+Date: 2018-12-26 14:25:00
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -48,13 +48,14 @@ CREATE TABLE `history` (
   UNIQUE KEY `history_1` (`sheetid`) USING BTREE,
   KEY `history_2` (`hostid`) USING BTREE,
   CONSTRAINT `c_history_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of history
 -- ----------------------------
 INSERT INTO `history` VALUES ('23', '1', '100000001898490491');
 INSERT INTO `history` VALUES ('24', '1', '100000001898490492');
+INSERT INTO `history` VALUES ('25', '2', '100000001898490493');
 
 -- ----------------------------
 -- Table structure for `history_items`
@@ -67,21 +68,21 @@ CREATE TABLE `history_items` (
   `value` varchar(255) NOT NULL DEFAULT '',
   `clock` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`historyitemid`),
-  KEY `history_items_1` (`itemid`,`clock`) USING BTREE,
+  UNIQUE KEY `history_items_1` (`itemid`,`sheetid`) USING BTREE,
   KEY `history_items_2` (`sheetid`) USING BTREE,
-  CONSTRAINT `c_history_items_2` FOREIGN KEY (`sheetid`) REFERENCES `history` (`sheetid`) ON DELETE CASCADE,
-  CONSTRAINT ` c_history_items_1` FOREIGN KEY (`itemid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
+  CONSTRAINT ` c_history_items_1` FOREIGN KEY (`itemid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE,
+  CONSTRAINT `c_history_items_2` FOREIGN KEY (`sheetid`) REFERENCES `history` (`sheetid`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of history_items
 -- ----------------------------
-INSERT INTO `history_items` VALUES ('42', '100000001898490491', '1', '10.4.3.1', '0');
-INSERT INTO `history_items` VALUES ('43', '100000001898490491', '2', '3', '0');
-INSERT INTO `history_items` VALUES ('44', '100000001898490491', '3', '4', '0');
-INSERT INTO `history_items` VALUES ('45', '100000001898490492', '1', '10.4.4.3', '0');
-INSERT INTO `history_items` VALUES ('46', '100000001898490492', '2', '4', '0');
-INSERT INTO `history_items` VALUES ('47', '100000001898490492', '3', '5', '0');
+INSERT INTO `history_items` VALUES ('1', '100000001898490491', '5', '10.4.5.1', '0');
+INSERT INTO `history_items` VALUES ('2', '100000001898490491', '6', '33', '0');
+INSERT INTO `history_items` VALUES ('3', '100000001898490491', '7', '22', '0');
+INSERT INTO `history_items` VALUES ('4', '100000001898490492', '5', '10.4.5.2', '0');
+INSERT INTO `history_items` VALUES ('5', '100000001898490492', '6', '44', '0');
+INSERT INTO `history_items` VALUES ('6', '100000001898490492', '7', '88', '0');
 
 -- ----------------------------
 -- Table structure for `hosts`
@@ -101,14 +102,14 @@ CREATE TABLE `hosts` (
   KEY `hosts_3` (`name`),
   KEY `c_hosts_1` (`templateid`),
   CONSTRAINT `c_hosts_1` FOREIGN KEY (`templateid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of hosts
 -- ----------------------------
 INSERT INTO `hosts` VALUES ('1', 'XM0005', '0', '海天店', null, '', '0');
 INSERT INTO `hosts` VALUES ('2', 'XM0004', '0', '康乐店', null, '', '0');
-INSERT INTO `hosts` VALUES ('3', 'POS', '0', '收银机参数组', null, '', '0');
+INSERT INTO `hosts` VALUES ('5', 'Templates POS Params', '3', '收银机参数组', null, '无', '0');
 
 -- ----------------------------
 -- Table structure for `hosts_groups`
@@ -123,13 +124,14 @@ CREATE TABLE `hosts_groups` (
   KEY `hosts_groups_2` (`groupid`),
   CONSTRAINT `c_hosts_groups_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE,
   CONSTRAINT `c_hosts_groups_2` FOREIGN KEY (`groupid`) REFERENCES `groups` (`groupid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of hosts_groups
 -- ----------------------------
 INSERT INTO `hosts_groups` VALUES ('1', '1', '1');
 INSERT INTO `hosts_groups` VALUES ('2', '1', '2');
+INSERT INTO `hosts_groups` VALUES ('4', '1', '5');
 
 -- ----------------------------
 -- Table structure for `hosts_templates`
@@ -144,13 +146,13 @@ CREATE TABLE `hosts_templates` (
   KEY `hosts_templates_2` (`templateid`),
   CONSTRAINT `c_hosts_templates_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE,
   CONSTRAINT `c_hosts_templates_2` FOREIGN KEY (`templateid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of hosts_templates
 -- ----------------------------
-INSERT INTO `hosts_templates` VALUES ('15', '1', '3');
-INSERT INTO `hosts_templates` VALUES ('16', '2', '3');
+INSERT INTO `hosts_templates` VALUES ('23', '1', '5');
+INSERT INTO `hosts_templates` VALUES ('24', '2', '5');
 
 -- ----------------------------
 -- Table structure for `items`
@@ -169,14 +171,14 @@ CREATE TABLE `items` (
   KEY `items_3` (`templateid`),
   CONSTRAINT `c_items_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE,
   CONSTRAINT `c_items_2` FOREIGN KEY (`templateid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of items
 -- ----------------------------
-INSERT INTO `items` VALUES ('1', '3', '参数1', '', null, '0');
-INSERT INTO `items` VALUES ('2', '3', '参数2', '', null, '0');
-INSERT INTO `items` VALUES ('3', '3', '参数3', '', null, '0');
+INSERT INTO `items` VALUES ('5', '5', '参数1', '无', null, '0');
+INSERT INTO `items` VALUES ('6', '5', '参数2', '无', null, '0');
+INSERT INTO `items` VALUES ('7', '5', '参数3', '', null, '0');
 
 -- ----------------------------
 -- Table structure for `rights`
