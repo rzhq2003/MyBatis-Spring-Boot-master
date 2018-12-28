@@ -52,7 +52,7 @@ import tk.mybatis.springboot.request.ItemsAddDTO;
 import tk.mybatis.springboot.request.ItemsUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.HostsService;
-import tk.mybatis.springboot.service.HostsTemplatesService;
+
 import tk.mybatis.springboot.service.ItemsService;
 import tk.mybatis.springboot.util.MyUtils;
 
@@ -83,23 +83,21 @@ public class ItemsController {
 	@Autowired
 	HostsService hostsService;
 	
-	@Autowired
-	HostsTemplatesService hostsTemplatesService;
+
 
 	
     // 获取用户列表
     @ApiOperation(value = "参数项列表", notes = "参数项列表",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
-    	@ApiImplicitParam(name = "hostid", required = true, dataType = "Long", paramType = "path")
+    	@ApiImplicitParam(name = "templateid", required = true, dataType = "Long", paramType = "path")
     	})
-    @RequestMapping(value = "{hostid}", method = RequestMethod.GET)//接口基本路径
-    @PreAuthorize("hasRole('ADMIN')")
+    @RequestMapping(value = "{templateid}", method = RequestMethod.GET)//接口基本路径
     // json格式传递对象使用RequestBody注解
-    public ResObject getBys(@PathVariable Long hostid) {   
-    	System.out.print("hotsid>>>" + hostid);
+    public ResObject getBys(@PathVariable Long templateid) {   
+    	System.out.print("hotsid>>>" + templateid);
     	Items items = new Items();
-    	items.setHostid(hostid);
+    	items.setTemplateid(templateid);
     	return new ResObject(200, itemsService.select(items));
     }
 	
@@ -115,9 +113,9 @@ public class ItemsController {
     public ResObject add(@RequestBody ItemsAddDTO itemsAddDTO) {
 		try {
 			
-			if (itemsAddDTO.getName() != null && itemsAddDTO.getHostid() != null) {
+			if (itemsAddDTO.getName() != null && itemsAddDTO.getTemplateid() != null) {
 				Hosts hosts = new Hosts();				
-				hosts = hostsService.getById(itemsAddDTO.getHostid());
+				hosts = hostsService.getById(itemsAddDTO.getTemplateid());
 				if (hosts.getStatus() == 3) {
 					Items items = new Items();
 					BeanUtils.copyProperties(itemsAddDTO, items);
@@ -126,10 +124,10 @@ public class ItemsController {
 					jsonObject.put("itemid", items.getItemid());
 					return new ResObject(200, jsonObject);
 				} else {
-					return new ResObject(400, "hostid传入错误");
+					return new ResObject(400, "templateid传入错误");
 				}			
 			} else {
-				return new ResObject(400, "name或hostid不能为空");
+				return new ResObject(400, "name或templateid不能为空");
 			}
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
@@ -191,7 +189,6 @@ public class ItemsController {
     	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
     	})
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ADMIN')")
     public ResObject view(@PathVariable Long id) {
     	try {
     		JSONObject jsonObject = new JSONObject(true);

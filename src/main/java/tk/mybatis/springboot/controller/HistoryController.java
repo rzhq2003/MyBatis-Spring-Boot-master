@@ -25,42 +25,47 @@
 package tk.mybatis.springboot.controller;
 
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
 import tk.mybatis.springboot.model.History;
 import tk.mybatis.springboot.model.HistoryItems;
 import tk.mybatis.springboot.model.Items;
 import tk.mybatis.springboot.model.Pages;
+import tk.mybatis.springboot.request.HistoryAddDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.HistoryItemsService;
 import tk.mybatis.springboot.service.HistoryService;
 import tk.mybatis.springboot.service.HostsService;
-import tk.mybatis.springboot.service.HostsTemplatesService;
+
 import tk.mybatis.springboot.service.ItemsService;
+import tk.mybatis.springboot.util.MyUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 
 /***
@@ -86,8 +91,7 @@ public class HistoryController {
 	@Autowired
 	HostsService hostsService;
 	
-	@Autowired
-	HostsTemplatesService hostsTemplatesService;
+
 	
 	@Autowired
 	HistoryService historyService;
@@ -99,40 +103,78 @@ public class HistoryController {
     @ApiOperation(value = "参数值列表", notes = "参数值列表",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
-    	@ApiImplicitParam(name = "hostid", required = true, dataType = "Long", paramType = "path")
+    	@ApiImplicitParam(name = "hostid", required = true, dataType = "Long", paramType = "path"),
+    	@ApiImplicitParam(name = "templateid", required = true, dataType = "Long", paramType = "path")
     	})
-    @RequestMapping(value = "{hostid}", method = RequestMethod.GET)//接口基本路径
+    @RequestMapping(value = "{templateid}/{hostid}", method = RequestMethod.GET)//接口基本路径
     @PreAuthorize("hasRole('ADMIN')")
     // json格式传递对象使用RequestBody注解
-    public ResObject getBys(Pages pages, @PathVariable Long hostid) {
-		JSONArray jsonArray = new JSONArray();
+    public ResObject getBys(Pages pages, @PathVariable Long templateid, @PathVariable Long hostid) {
 		History history = new History();
 		history.setHostid(hostid);
+		history.setTemplateid(templateid);
 		List<History> list = new ArrayList<History>();
+        if (pages.getPage() != null && pages.getRows() != null) {
+            PageHelper.startPage(pages.getPage(), pages.getRows(), "historyid");
+        }  
 		list = historyService.select(history);
+		
+		List<Map<String, Object>> listMap = new ArrayList<Map<String,Object>>();
 		for (int i = 0; i < list.size(); i++) {
-			JSONObject jsonObject = new JSONObject();
+			Map<String, Object> map = new HashMap<String, Object>();
 			HistoryItems historyItems = new HistoryItems();
-			historyItems.setsheetid(list.get(i).getSheetid());
+			historyItems.setSheetid(list.get(i).getSheetid());
 			List<HistoryItems> list1 = new ArrayList<HistoryItems>();
 			list1 = historyItemsService.select(historyItems);
-			jsonObject.put("hostid", list.get(i).getHostid());
-			jsonObject.put("sheetid", list.get(i).getSheetid());
+			map.put("hostid", list.get(i).getHostid());
+			map.put("sheetid", list.get(i).getSheetid());
 			for (int j = 0; j < list1.size(); j++) {
 				Items items = new Items();
 				items = itemsService.getById(list1.get(j).getItemid());
-				jsonObject.put(items.getItemid().toString(), list1.get(j).getValue());	
+				map.put(items.getName(), list1.get(j).getValue());	
 			}
-			jsonArray.add(jsonObject);		
-		}
-		
-		System.out.println(JSONObject.toJSONString(jsonArray));
-		return new ResObject(200, jsonArray);
-					
-		}
+			listMap.add(map);
+		}    
+		JSONObject jsonObject = new JSONObject(true);
+        jsonObject.put("pageInfo", new PageInfo<History>(list));
+        jsonObject.put("listItems", listMap);
+        jsonObject.put("page", pages.getPage());
+        jsonObject.put("rows", pages.getRows());
+		return new ResObject(200, jsonObject);	
+	}
   	
 
-
+	@ApiOperation(value = "参数值创建", notes = "参数值创建",produces = "application/json")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
+    	})
+    @RequestMapping(value = "/add", method = RequestMethod.POST)//接口基本路径
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    // json格式传递对象使用RequestBody注解
+    @Transactional(rollbackOn = Exception.class)
+    public ResObject add(@RequestBody HistoryAddDTO historyAddDTO) {
+		try {
+			String sheetid = MyUtils.getOrderIdByUUId();
+			History history = new History();
+			history.setSheetid(sheetid);
+			BeanUtils.copyProperties(historyAddDTO, history);
+			historyService.save(history);
+			List<HistoryItems> list = new ArrayList<HistoryItems>();
+			list = historyAddDTO.getListItems();
+			for (int i = 0; i < list.size(); i++) {
+				list.get(i).setSheetid(sheetid);
+				list.get(i).setClock(System.currentTimeMillis());
+			}
+			historyItemsService.saves(list);
+			return new ResObject(200, history);
+			
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
+	        return new ResObject(400, "操作异常");
+		}
+		
+	}
 
 }
 

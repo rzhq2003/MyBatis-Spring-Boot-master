@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.alibaba.fastjson.JSONArray;
+
 import com.alibaba.fastjson.JSONObject;
 
 import tk.mybatis.springboot.mapper.HistoryItemsMapper;
@@ -24,7 +24,7 @@ import tk.mybatis.springboot.model.Items;
 
 import tk.mybatis.springboot.service.HistoryService;
 import tk.mybatis.springboot.service.HostsService;
-import tk.mybatis.springboot.service.HostsTemplatesService;
+
 import tk.mybatis.springboot.service.ItemsService;
 
 @RunWith(SpringRunner.class)
@@ -41,8 +41,6 @@ public class RunTests {
 	@Autowired
 	HostsService hostsService;
 	
-	@Autowired
-	HostsTemplatesService hostsTemplatesService;
 	
 	@Autowired
 	HistoryService historyService;
@@ -69,7 +67,7 @@ public class RunTests {
 		for (int i = 0; i < list.size(); i++) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			HistoryItems historyItems = new HistoryItems();
-			historyItems.setsheetid(list.get(i).getSheetid());
+			historyItems.setSheetid(list.get(i).getSheetid());
 			List<HistoryItems> list1 = new ArrayList<HistoryItems>();
 			list1 = historyItemsMapper.select(historyItems);
 			map.put("hostid", list.get(i).getHostid());
@@ -80,8 +78,7 @@ public class RunTests {
 				map.put(items.getItemid().toString(), list1.get(j).getValue());	
 			}
 			listMap.add(map);
-		}
-		
+		}		
 		System.out.println(JSONObject.toJSONString(listMap));
 	}
 

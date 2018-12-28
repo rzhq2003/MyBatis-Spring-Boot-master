@@ -11,6 +11,8 @@ public class History extends Pages {
     @JSONField(serialize = false)
     private Long historyid;
 
+    private Long templateid;
+
     private Long hostid;
 
     private String sheetid;
@@ -27,6 +29,20 @@ public class History extends Pages {
      */
     public void setHistoryid(Long historyid) {
         this.historyid = historyid;
+    }
+
+    /**
+     * @return templateid
+     */
+    public Long getTemplateid() {
+        return templateid;
+    }
+
+    /**
+     * @param templateid
+     */
+    public void setTemplateid(Long templateid) {
+        this.templateid = templateid;
     }
 
     /**

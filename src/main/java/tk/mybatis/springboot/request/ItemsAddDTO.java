@@ -12,8 +12,8 @@ public class ItemsAddDTO {
 	@ApiModelProperty(example = "无", position = 2)
 	private String description;
 
-	@ApiModelProperty(name = "hostid", value = "不能为空", example = "1", position = 3, required = true)
-    private Long hostid;
+	@ApiModelProperty(name = "templateid", value = "不能为空", example = "1", position = 3, required = true)
+    private Long templateid;
 	
 	@ApiModelProperty(position = 4)
     private Integer enable;
@@ -26,12 +26,14 @@ public class ItemsAddDTO {
 		this.name = name;
 	}
 
-	public Long getHostid() {
-		return hostid;
+
+
+	public Long getTemplateid() {
+		return templateid;
 	}
 
-	public void setHostid(Long hostid) {
-		this.hostid = hostid;
+	public void setTemplateid(Long templateid) {
+		this.templateid = templateid;
 	}
 
 	public Integer getEnable() {

@@ -39,6 +39,8 @@ public class SwaggerConfig {
 				,new Tag("template-module-resource", "模板管理")
 				,new Tag("items-module-resource", "参数项管理")
 				,new Tag("history-module-resource", "参数值管理")
+				,new Tag("groups-module-resource", "门店组管理")
+				,new Tag("hosts-module-resource", "门店管理")
 				};
 		return tags;
 	}

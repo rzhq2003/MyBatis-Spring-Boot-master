@@ -276,7 +276,6 @@ public class UsrgrpController {
     	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
     	})
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ADMIN')")
     public ResObject view(@PathVariable Long id) {
     	try {
     		JSONObject jsonObject = new JSONObject(true);

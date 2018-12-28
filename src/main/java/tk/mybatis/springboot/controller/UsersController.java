@@ -50,6 +50,7 @@ import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.UsersGroupsService;
 import tk.mybatis.springboot.service.UsersService;
 import tk.mybatis.springboot.service.UsrgrpService;
+
 import tk.mybatis.springboot.util.MyUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -108,20 +109,28 @@ public class UsersController {
     	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
     	})
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ADMIN')")
     public ResObject view(@PathVariable Long id) {
     	try {
-        	JSONObject jsonObject = new JSONObject(true);
-            Users users = usersService.getById(id);
-            jsonObject.put("users",users);
-            UsersGroups usersGroups = new UsersGroups();
-            usersGroups.setUserid(id);
-            String usrgrpids = UsersGroupsService.getByValues(usersGroups, "usrgrpid");
-            System.out.print(usrgrpids);
-            List<Usrgrp> list = new ArrayList<Usrgrp>();
-            list = UsrgrpService.selectByIds(usrgrpids);
-            jsonObject.put("usrgrps",list);
-            return new ResObject(200, jsonObject);  
+    		// String token = request.getHeader("Authorization").replace("Bearer ", "");
+    		// String role = JwtTokenUtils.getUserRole(token).replace("ROLE_", "");
+    		Users users = new Users();
+    		users = usersService.getById(id);
+           
+            if (MyUtils.notEmpty(users)) {
+                JSONObject jsonObject = new JSONObject(true);
+                jsonObject.put("users",users);
+                UsersGroups usersGroups = new UsersGroups();
+                usersGroups.setUserid(users.getUserid());
+                String usrgrpids = UsersGroupsService.getByValues(usersGroups, "usrgrpid");
+                System.out.print(usrgrpids);
+                List<Usrgrp> list = new ArrayList<Usrgrp>();
+                list = UsrgrpService.selectByIds(usrgrpids);
+                jsonObject.put("usrgrps",list);
+                return new ResObject(200, jsonObject);  
+            } else {
+            	return new ResObject(400, "userid:" + id + ",不存在");  
+            }
+
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
 			return new ResObject(400, "操作异常"); 
@@ -135,7 +144,6 @@ public class UsersController {
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ADMIN')")
     public ResObject update(@RequestBody UsersUpdateDTO usersUpdateDTO) {
     	if (MyUtils.notEmpty(usersUpdateDTO.getUserid())) {
         	Users users = new Users();

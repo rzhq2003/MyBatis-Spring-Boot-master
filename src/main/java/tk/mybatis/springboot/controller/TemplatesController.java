@@ -24,7 +24,7 @@
 
 package tk.mybatis.springboot.controller;
 
-import org.apache.commons.beanutils.ConvertUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -45,19 +45,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import tk.mybatis.springboot.model.Groups;
+
 import tk.mybatis.springboot.model.Hosts;
-import tk.mybatis.springboot.model.HostsGroups;
-import tk.mybatis.springboot.model.HostsTemplates;
-import tk.mybatis.springboot.model.Pages;
+import tk.mybatis.springboot.model.Items;
 import tk.mybatis.springboot.request.TemplatesAddDTO;
 import tk.mybatis.springboot.request.TemplatesUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.GroupsService;
 import tk.mybatis.springboot.service.HostsGroupsService;
 import tk.mybatis.springboot.service.HostsService;
-import tk.mybatis.springboot.service.HostsTemplatesService;
-
+import tk.mybatis.springboot.service.ItemsService;
 import tk.mybatis.springboot.util.MyUtils;
 
 
@@ -86,11 +83,12 @@ public class TemplatesController {
 	@Autowired
 	HostsGroupsService hostsGroupsService;
 	
-	@Autowired
-	HostsTemplatesService hostsTemplatesService;
 	
 	@Autowired
 	GroupsService groupsService;
+	
+	@Autowired
+	ItemsService itemsService;
 	
 	@Autowired
 	HttpServletRequest request;
@@ -102,18 +100,20 @@ public class TemplatesController {
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
     @RequestMapping(value = "", method = RequestMethod.GET)//接口基本路径
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     // json格式传递对象使用RequestBody注解
-    public ResObject getAll(Pages pages) {       
-    	return new ResObject(200, hostsService.getAllTemplates(pages));
+    public ResObject getAll() {     
+    	List<Hosts> list = new ArrayList<Hosts>();
+    	list = hostsService.getTemplates();
+    	return new ResObject(200, list);
     }
+    
     
     @ApiOperation(value = "模板创建", notes = "模板创建",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
     @RequestMapping(value = "/add", method = RequestMethod.POST)//接口基本路径
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     // json格式传递对象使用RequestBody注解
     @Transactional(rollbackOn = Exception.class)
     public ResObject add(@RequestBody TemplatesAddDTO templatesAddDTO) { 
@@ -121,38 +121,10 @@ public class TemplatesController {
         	if (MyUtils.notEmpty(templatesAddDTO.getHost())) {
             	Hosts hosts = new Hosts();
             	BeanUtils.copyProperties(templatesAddDTO, hosts); 
-            	Long[] groupids = templatesAddDTO.getGroupids();
-            	if (MyUtils.notEmpty(groupids)) {
-            		hosts.setStatus(3);
-            		hostsService.save(hosts); //写入模板
-            		List<HostsGroups> hGroups = new ArrayList<HostsGroups>();
-            		for (int i = 0; i < groupids.length; i++) {
-            			HostsGroups hostsGroups = new HostsGroups();
-            			hostsGroups.setHostid(hosts.getHostid());
-            			hostsGroups.setGroupid(groupids[i]);
-            			hGroups.add(hostsGroups);
-					}
-            		System.out.print(JSONObject.toJSONString(hGroups));
-            		hostsGroupsService.saves(hGroups);
-            		
-            		Long[] hostids = templatesAddDTO.getHostids();
-            		if (MyUtils.notEmpty(hostids)) {
-            			List<HostsTemplates> hTemplates = new ArrayList<HostsTemplates>();
-            			for (int i = 0; i < hostids.length; i++) {
-							HostsTemplates hostsTemplates = new HostsTemplates();
-							hostsTemplates.setHostid(hostids[i]);
-							hostsTemplates.setTemplateid(hosts.getHostid());
-							hTemplates.add(hostsTemplates);
-						}
-            			hostsTemplatesService.saves(hTemplates);
-            		}
-
-					JSONObject jsonObject = new JSONObject();
-					jsonObject.put("templateid", hosts.getHostid());
-					return new ResObject(200, jsonObject);	
-            	} else {
-            		return new ResObject(400, "groupid不能为空"); 
-            	}	
+            	hostsService.save(hosts);
+            	JSONObject jsonObject = new JSONObject();
+            	jsonObject.put("templateid", hosts.getHostid());
+            	return new ResObject(200, jsonObject);
         	} else {
         		return new ResObject(400, "主机名称不能为空"); 
         	}   		
@@ -169,7 +141,7 @@ public class TemplatesController {
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
     @RequestMapping(value = "/update", method = RequestMethod.POST)//接口基本路径
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     // json格式传递对象使用RequestBody注解
     @Transactional(rollbackOn = Exception.class)
     public ResObject update(@RequestBody TemplatesUpdateDTO templatesUpdateDTO) { 
@@ -178,79 +150,16 @@ public class TemplatesController {
     	 * groups 无保持不变，有，先执行删除，后重新写入，hosts同理操作;
     	 */
     	try {
-    		if (MyUtils.notEmpty(templatesUpdateDTO.getHostid())) {
+    		if (MyUtils.notEmpty(templatesUpdateDTO.getTemplateid())) {
     			Hosts hosts = new Hosts();
     			BeanUtils.copyProperties(templatesUpdateDTO, hosts);
+    			hosts.setHostid(templatesUpdateDTO.getTemplateid());
     			hostsService.updateById(hosts);
-    			
-    			Long[] groupids = templatesUpdateDTO.getGroupids();
-    			if (groupids != null) {
-    				if (MyUtils.notEmpty(groupids)) {   					
-    					HostsGroups hostsGroups = new HostsGroups();
-    					hostsGroups.setHostid(templatesUpdateDTO.getHostid());
-    					String str = hostsGroupsService.getByValues(hostsGroups, "groupid");
-    					Long[] groupidss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
-    		 			Long[] groupids_save = MyUtils.substract(groupids, groupidss); //写入数据
-            			Long[] groupids_del = MyUtils.substract(groupidss, groupids); //删除数据           			
-            			if (MyUtils.notEmpty(groupids_save)) {
-            				List<HostsGroups> hlist = new ArrayList<HostsGroups>();
-            				for (int i = 0; i < groupids_save.length; i++) {
-            					HostsGroups hGroups = new HostsGroups();
-            					hGroups.setGroupid(groupids_save[i]);
-            					hGroups.setHostid(templatesUpdateDTO.getHostid());
-            					hlist.add(hGroups);
-        					}
-            				System.out.print("hostsGroups>>>" + JSONObject.toJSONString(hlist));
-        					hostsGroupsService.saves(hlist);
-            			}
-            			if (MyUtils.notEmpty(groupids_del)) {
-            				for (int i = 0; i < groupids_del.length; i++) {
-            					hostsGroups.setGroupid(groupids_del[i]);
-            					hostsGroups.setHostid(templatesUpdateDTO.getHostid());
-            					hostsGroupsService.delete(hostsGroups);
-        					}
-            			}       			
-    				} else {
-    					return new ResObject(400, "groupid不能为空");	
-    				}
-    			}
-    		    
-    			Long[] hostids = templatesUpdateDTO.getHostids();
-    			if (hostids != null) {
-    				HostsTemplates hostsTemplates = new HostsTemplates();
-    				hostsTemplates.setTemplateid(templatesUpdateDTO.getHostid());
-    				String str = hostsTemplatesService.getByValues(hostsTemplates, "hostid");
-    				Long[] hostidss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
-		 			Long[] hostids_save = MyUtils.substract(hostids, hostidss); //写入数据
-        			Long[] hostids_del = MyUtils.substract(hostidss, hostids); //删除数据    
-        			
-        			if (MyUtils.notEmpty(hostids_save)) { 				
-      					
-           				List<HostsTemplates> htlist = new ArrayList<HostsTemplates>();
-        				for (int i = 0; i < hostids_save.length; i++) {
-        					HostsTemplates hTemplates = new HostsTemplates();
-        					hTemplates.setHostid(hostids_save[i]);
-        					hTemplates.setTemplateid(templatesUpdateDTO.getHostid());
-        					htlist.add(hTemplates);  					
-     					}
-    					hostsTemplatesService.saves(htlist);
-    					
-        			}
-        			if (MyUtils.notEmpty(hostids_del)) {
-        				for (int i = 0; i < hostids_del.length; i++) {
-        					hostsTemplates.setHostid(hostids_del[i]);
-        					hostsTemplates.setTemplateid(templatesUpdateDTO.getHostid());
-        					hostsTemplatesService.delete(hostsTemplates);       					
-    					}
-        			}  			
-        		       			
-    			}
-  			
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("templateid", templatesUpdateDTO.getHostid());
+				jsonObject.put("templateid", hosts.getHostid());
 				return new ResObject(200, jsonObject);	
     		} else {
-    			return new ResObject(400, "hostid不以为空");
+    			return new ResObject(400, "templateid不以为空");
     		}	
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
@@ -266,26 +175,14 @@ public class TemplatesController {
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
     	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
     	})
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResObject view(@PathVariable Long id) {
     	try {
-    		JSONObject jsonObject = new JSONObject(true);
     		Hosts hosts = hostsService.getById(id);
-    		
-    		HostsGroups hostsGroups = new HostsGroups();
-    		hostsGroups.setHostid(id);
-    		String groupsids = hostsGroupsService.getByValues(hostsGroups, "groupid");
-    		List<Groups> groupslist = new ArrayList<Groups>();
-    		groupslist = groupsService.selectByIds(groupsids);
-    		
-    		HostsTemplates hostsTemplates = new HostsTemplates();
-    		hostsTemplates.setTemplateid(id);
-    		String hostsids = hostsTemplatesService.getByValues(hostsTemplates, "hostid");
-    		List<Hosts> hostslist = hostsService.selectByIds(hostsids);
-    		
-    		jsonObject.put("templates",hosts);
-    		jsonObject.put("groups", groupslist);
-    		jsonObject.put("hosts", hostslist);
+    		Items items = new Items();
+    		items.setTemplateid(hosts.getHostid());
+    		JSONObject jsonObject = new JSONObject(true);
+    		jsonObject.put("templates", hosts);
+    		jsonObject.put("items", itemsService.select(items));
     		return new ResObject(200, jsonObject);
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
@@ -305,7 +202,7 @@ public class TemplatesController {
     public ResObject delete(@PathVariable String ids) {
     		hostsService.deleteByIds(ids);
     		JSONObject jsonObject = new JSONObject();
-    		jsonObject.put("templatesid", ids);
+    		jsonObject.put("templateids", ids);
     		return new ResObject(200,jsonObject, "1");
     }
 }

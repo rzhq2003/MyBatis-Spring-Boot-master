@@ -7,8 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class TemplatesUpdateDTO {
 	
-	@ApiModelProperty(name = "hostid",value = "更新必填段", example = "3", required = true, position = 1)
-    private Long hostid;
+	@ApiModelProperty(name = "templateid",value = "更新必填段", example = "3", required = true, position = 1)
+    private Long templateid;
     
     @ApiModelProperty(name = "host", example = "Templates POS Params", position = 2)
     private String host;
@@ -19,20 +19,7 @@ public class TemplatesUpdateDTO {
     @ApiModelProperty(name = "description", example = "无", position = 4)
     private String description;
     
-    @ApiModelProperty(name = "groupids", value = "主机组id,不能为空", position = 5)
-	private Long[] groupids;
-	
-    @ApiModelProperty(name = "hostids", value = "主机id,可选", position = 6)
-	private Long[] hostids;
 
-
-	public Long getHostid() {
-		return hostid;
-	}
-
-	public void setHostid(Long hostid) {
-		this.hostid = hostid;
-	}
 
 	public String getHost() {
 		return host;
@@ -58,21 +45,15 @@ public class TemplatesUpdateDTO {
 		this.description = description;
 	}
 
-	public Long[] getGroupids() {
-		return groupids;
+	public Long getTemplateid() {
+		return templateid;
 	}
 
-	public void setGroupids(Long[] groupids) {
-		this.groupids = groupids;
+	public void setTemplateid(Long templateid) {
+		this.templateid = templateid;
 	}
 
-	public Long[] getHostids() {
-		return hostids;
-	}
-
-	public void setHostids(Long[] hostids) {
-		this.hostids = hostids;
-	}   
+ 
 	
 	
 }

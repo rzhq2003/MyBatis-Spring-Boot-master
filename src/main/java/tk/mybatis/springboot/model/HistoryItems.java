@@ -2,23 +2,28 @@ package tk.mybatis.springboot.model;
 
 import javax.persistence.*;
 
-import com.alibaba.fastjson.annotation.JSONField;
+
+import io.swagger.annotations.ApiModelProperty;
 
 @Table(name = "history_items")
 public class HistoryItems extends Pages {
     @Id
     @Column(name = "historyitemid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JSONField(serialize = false)
+    @ApiModelProperty(hidden = true)
     private Long historyitemid;
 
+    @ApiModelProperty(hidden = true)
     private String sheetid;
 
+    @ApiModelProperty(name = "itemid", example = "1006", required = true)
     private Long itemid;
 
+    @ApiModelProperty(name = "value", example = "123")
     private String value;
 
-    private Integer clock;
+    @ApiModelProperty(hidden = true)
+    private Long clock;
 
     /**
      * @return historyitemid
@@ -34,21 +39,16 @@ public class HistoryItems extends Pages {
         this.historyitemid = historyitemid;
     }
 
-    /**
-     * @return sheetid
-     */
-    public String getsheetid() {
-        return sheetid;
-    }
 
-    /**
-     * @param sheetid
-     */
-    public void setsheetid(String sheetid) {
-        this.sheetid = sheetid == null ? null : sheetid.trim();
-    }
+    public String getSheetid() {
+		return sheetid;
+	}
 
-    /**
+	public void setSheetid(String sheetid) {
+		this.sheetid = sheetid;
+	}
+
+	/**
      * @return itemid
      */
     public Long getItemid() {
@@ -79,14 +79,14 @@ public class HistoryItems extends Pages {
     /**
      * @return clock
      */
-    public Integer getClock() {
+    public Long getClock() {
         return clock;
     }
 
     /**
      * @param clock
      */
-    public void setClock(Integer clock) {
+    public void setClock(Long clock) {
         this.clock = clock;
     }
 }

@@ -3,14 +3,16 @@ package tk.mybatis.springboot.request;
 
 
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 
 @ApiModel(value = "TemplatesAddDTO", description = "模板对象")
 public class TemplatesAddDTO {
-
-    @ApiModelProperty(name = "host", value = "不能为空", example = "Templates POS Params", position = 1, required = true)
+    
+    @ApiModelProperty(name = "host", example = "Templates POS Params", position = 1)
     private String host;
 
     @ApiModelProperty(name = "name", example = "收银机参数组", position = 2)
@@ -19,19 +21,10 @@ public class TemplatesAddDTO {
     @ApiModelProperty(name = "description", example = "无", position = 3)
     private String description;
     
-    @ApiModelProperty(name = "groupids", value = "主机组id,不能为空", position = 4)
-	private Long[] groupids;
-	
-    @ApiModelProperty(name = "hostids", value = "主机id,可选", position = 5)
-	private Long[] hostids;
-
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
+    @JSONField(serialize = false)
+    @ApiModelProperty(hidden = true)
+    private Integer status = 3;
+    
 
 	public String getName() {
 		return name;
@@ -49,22 +42,24 @@ public class TemplatesAddDTO {
 		this.description = description;
 	}
 
-	public Long[] getGroupids() {
-		return groupids;
+
+	public Integer getStatus() {
+		return status;
 	}
 
-	public void setGroupids(Long[] groupids) {
-		this.groupids = groupids;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
-	public Long[] getHostids() {
-		return hostids;
+	public String getHost() {
+		return host;
 	}
 
-	public void setHostids(Long[] hostids) {
-		this.hostids = hostids;
+	public void setHost(String host) {
+		this.host = host;
 	}
 
+	
 
 	
     

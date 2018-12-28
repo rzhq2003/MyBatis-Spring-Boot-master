@@ -20,9 +20,6 @@ public class Hosts extends Pages {
 
 
     private String name;
-    
-    @JSONField(serialize = false)
-    private Long templateid;
 
     private String description;
 
@@ -82,20 +79,6 @@ public class Hosts extends Pages {
      */
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
-    }
-
-    /**
-     * @return templateid
-     */
-    public Long getTemplateid() {
-        return templateid;
-    }
-
-    /**
-     * @param templateid
-     */
-    public void setTemplateid(Long templateid) {
-        this.templateid = templateid;
     }
 
     /**
