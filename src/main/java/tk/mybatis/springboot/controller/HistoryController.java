@@ -122,19 +122,31 @@ public class HistoryController {
 		List<Map<String, Object>> listMap = new ArrayList<Map<String,Object>>();
 		for (int i = 0; i < list.size(); i++) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			HistoryItems historyItems = new HistoryItems();
-			historyItems.setSheetid(list.get(i).getSheetid());
-			List<HistoryItems> list1 = new ArrayList<HistoryItems>();
-			list1 = historyItemsService.select(historyItems);
 			map.put("hostid", list.get(i).getHostid());
 			map.put("sheetid", list.get(i).getSheetid());
-			for (int j = 0; j < list1.size(); j++) {
+
+			HistoryItems historyItems = new HistoryItems();
+			historyItems.setSheetid(list.get(i).getSheetid());
+			List<HistoryItems> listItems = new ArrayList<HistoryItems>();
+			listItems = historyItemsService.select(historyItems);
+			System.out.println(JSONObject.toJSONString(listItems));
+			List<Map<String, Object>> listMaps = new ArrayList<Map<String,Object>>();
+			for (int j = 0; j < listItems.size(); j++) {
 				Items items = new Items();
-				items = itemsService.getById(list1.get(j).getItemid());
-				map.put(items.getName(), list1.get(j).getValue());	
+				items = itemsService.getById(listItems.get(j).getItemid());
+				Map<String, Object> maps = new HashMap<String, Object>();
+				maps.put("historyitemid", listItems.get(j).getHistoryitemid());
+				maps.put("name", items.getName());
+				maps.put("value", listItems.get(j).getValue());
+				maps.put("clock", listItems.get(j).getClock());
+				listMaps.add(maps);
 			}
+	
+			map.put("values", listMaps);
+
 			listMap.add(map);
-		}    
+		}   
+		
 		JSONObject jsonObject = new JSONObject(true);
         jsonObject.put("pageInfo", new PageInfo<History>(list));
         jsonObject.put("listItems", listMap);
