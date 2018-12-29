@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by echisan on 2018/6/23
@@ -76,9 +78,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 按照jwt的规定，最后请求的时候应该是 `Bearer token`
         response.setCharacterEncoding("utf-8");
         response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("Authorization", JwtTokenUtils.TOKEN_PREFIX + token);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", 200);
-        jsonObject.put("data", JwtTokenUtils.TOKEN_PREFIX + token);
+        jsonObject.put("data", map);
         response.getWriter().write(jsonObject.toString());
     }
 

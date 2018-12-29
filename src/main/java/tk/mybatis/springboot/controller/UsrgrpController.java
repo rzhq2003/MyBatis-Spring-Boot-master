@@ -189,25 +189,26 @@ public class UsrgrpController {
         			usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
         			String str = usersGroupsService.getByValues(usersGroups, "userid");
         			Long[] useridss= (Long[]) ConvertUtils.convert(str.split(","), Long.class);
-        			Long[] usersids_save = MyUtils.substract(userids, useridss); //写入数据
-        			System.out.print("\nuseridss" + usersids_save);
+        			Long[] userids_save = MyUtils.substract(userids, useridss); //写入数据
+        			System.out.println("useridss" + userids_save);
         			Long[] userids_del = MyUtils.substract(useridss, userids); //删除数据
-        			if (MyUtils.notEmpty(usersids_save)) {
+        			if (MyUtils.notEmpty(userids_save)) {
         				List<UsersGroups> uglist = new ArrayList<UsersGroups>();
-        				for (int i = 0; i < usersids_save.length; i++) {
-        					UsersGroups uGroups = new UsersGroups();
-        					uGroups.setUserid(usersids_save[i]);
-        					uGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
-        					uglist.add(uGroups);
+        				for (int i = 0; i < userids_save.length; i++) {
+        					UsersGroups usersGroups_s = new UsersGroups();
+        					usersGroups_s.setUserid(userids_save[i]);
+        					usersGroups_s.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
+        					uglist.add(usersGroups_s);
     					}
      					System.out.print("uglist>>>" + JSONObject.toJSONString(uglist));
     					usersGroupsService.saves(uglist);
         			}
         			if (MyUtils.notEmpty(userids_del)) {
         				for (int i = 0; i < userids_del.length; i++) {
-        					usersGroups.setUserid(userids_del[i]);
-        					usersGroups.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
-        					usersGroupsService.delete(usersGroups);
+        					UsersGroups usersGroups_d = new UsersGroups();
+        					usersGroups_d.setUserid(userids_del[i]);
+        					usersGroups_d.setUsrgrpid(usrgrpUpdateDTO.getUsrgrpid());
+        					usersGroupsService.delete(usersGroups_d);
     					}
         			}	
     			}
@@ -225,10 +226,9 @@ public class UsrgrpController {
         			if (MyUtils.notEmpty(groupids_save)) {
         				List<Rights> rlist = new ArrayList<Rights>();
         				for (int i = 0; i < groupids_save.length; i++) {
-        					Rights rightss = new Rights();
-        					rightss.setId(groupids_save[i]);
-        					rightss.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
-        					rlist.add(rightss);
+        					rights.setId(groupids_save[i]);
+        					rights.setGroupid(usrgrpUpdateDTO.getUsrgrpid());
+        					rlist.add(rights);
     					}
         				rightsService.saves(rlist);
         			}
@@ -266,7 +266,7 @@ public class UsrgrpController {
     		usrgrpService.deleteByIds(ids);
     		JSONObject jsonObject = new JSONObject();
     		jsonObject.put("usrgrpids", ids);
-    		return new ResObject(200,jsonObject, "1");
+    		return new ResObject(200, jsonObject);
     }
     
 
@@ -280,7 +280,8 @@ public class UsrgrpController {
     	try {
     		JSONObject jsonObject = new JSONObject(true);
             Usrgrp usrgrp = usrgrpService.getById(id);
-            jsonObject.put("usrgrp",usrgrp);
+            jsonObject.put("usrgrpid",usrgrp.getUsrgrpid());
+            jsonObject.put("name",usrgrp.getName());
             UsersGroups usersGroups = new UsersGroups();
             usersGroups.setUsrgrpid(id);
             String userids = usersGroupsService.getByValues(usersGroups, "userid");
@@ -295,5 +296,6 @@ public class UsrgrpController {
 			return new ResObject(400, "操作异常"); 
 		}
     }
+    
 }
 

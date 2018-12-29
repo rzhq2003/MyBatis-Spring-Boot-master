@@ -10,24 +10,12 @@ public class TemplatesUpdateDTO {
 	@ApiModelProperty(name = "templateid",value = "更新必填段", example = "3", required = true, position = 1)
     private Long templateid;
     
-    @ApiModelProperty(name = "host", example = "Templates POS Params", position = 2)
-    private String host;
-
-    @ApiModelProperty(name = "name", example = "收银机参数组", position = 3)
+    @ApiModelProperty(name = "name", example = "收银机参数组", position = 2)
     private String name;
 
-    @ApiModelProperty(name = "description", example = "无", position = 4)
+    @ApiModelProperty(name = "description", example = "无", position = 3)
     private String description;
     
-
-
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
 
 	public String getName() {
 		return name;

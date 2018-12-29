@@ -59,7 +59,9 @@ import tk.mybatis.springboot.util.MyUtils;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -104,7 +106,14 @@ public class TemplatesController {
     public ResObject getAll() {     
     	List<Hosts> list = new ArrayList<Hosts>();
     	list = hostsService.getTemplates();
-    	return new ResObject(200, list);
+    	List<Map<String, Object>> listMap = new ArrayList<Map<String,Object>>();
+    	for (int i = 0; i < list.size(); i++) {
+    		Map<String, Object> map = new HashMap<String, Object>();
+			map.put("templateid", list.get(i).getHostid());
+			map.put("name", list.get(i).getName());
+			listMap.add(map);
+		}
+    	return new ResObject(200, listMap);
     }
     
     
@@ -118,7 +127,7 @@ public class TemplatesController {
     @Transactional(rollbackOn = Exception.class)
     public ResObject add(@RequestBody TemplatesAddDTO templatesAddDTO) { 
     	try {	
-        	if (MyUtils.notEmpty(templatesAddDTO.getHost())) {
+        	if (MyUtils.notEmpty(templatesAddDTO.getName())) {
             	Hosts hosts = new Hosts();
             	BeanUtils.copyProperties(templatesAddDTO, hosts); 
             	hostsService.save(hosts);
@@ -181,7 +190,8 @@ public class TemplatesController {
     		Items items = new Items();
     		items.setTemplateid(hosts.getHostid());
     		JSONObject jsonObject = new JSONObject(true);
-    		jsonObject.put("templates", hosts);
+    		jsonObject.put("templateid", hosts.getHostid());
+    		jsonObject.put("name", hosts.getName());
     		jsonObject.put("items", itemsService.select(items));
     		return new ResObject(200, jsonObject);
 		} catch (Exception e) {
