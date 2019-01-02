@@ -190,7 +190,7 @@ public class ItemsController {
     @ApiOperation(value = "模板参数详情", notes = "模板参数详情",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
-    	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
+    	@ApiImplicitParam(name = "id", value = "1000", required = true, dataType = "Long", paramType = "path")
     	})
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public ResObject view(@PathVariable Long id) {

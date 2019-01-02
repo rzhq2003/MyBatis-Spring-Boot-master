@@ -7,10 +7,10 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class TemplatesUpdateDTO {
 	
-	@ApiModelProperty(name = "templateid",value = "更新必填段", example = "3", required = true, position = 1)
+	@ApiModelProperty(name = "templateid",value = "模板id,更新必填段", example = "3", required = true, position = 1)
     private Long templateid;
     
-    @ApiModelProperty(name = "name", example = "收银机参数组", position = 2)
+    @ApiModelProperty(name = "name", value = "模板名称", example = "收银机参数组", position = 2)
     private String name;
 
     @ApiModelProperty(name = "description", example = "无", position = 3)

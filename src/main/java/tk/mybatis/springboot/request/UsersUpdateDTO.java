@@ -7,20 +7,20 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "UsersUpdateDTO", description = "用户对象")
 public class UsersUpdateDTO {
-	@ApiModelProperty(name = "userid",value = "必填", example = "27", required = true, position = 1)
+	@ApiModelProperty(name = "userid",value = "必填,用户id", example = "27", required = true, position = 1)
     private Long userid;
 	
-    @ApiModelProperty(name = "name",example = "张三", position = 2)
+    @ApiModelProperty(name = "name", value = "用户名称", example = "张三", position = 2)
     private String name;
 
-    @ApiModelProperty(name = "password",example = "123456", position = 3)
+    @ApiModelProperty(name = "password", value = "用户密码", example = "123456", position = 3)
     @JSONField(serialize = false) // 结果不被输出
     private String password;
 
     @ApiModelProperty(name = "enabled",example = "0", position = 4)
     private Integer enabled;
     
-    @ApiModelProperty(name = "role",example = "3", position = 5)
+    @ApiModelProperty(name = "role", value = "角色:1管理员 2用户 3客户", example = "3", position = 5)
     private Integer role;
 
 	public Long getUserid() {

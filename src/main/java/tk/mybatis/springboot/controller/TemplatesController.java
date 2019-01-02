@@ -182,7 +182,7 @@ public class TemplatesController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     @ApiImplicitParams({ 
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
-    	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
+    	@ApiImplicitParam(name = "id", value = "1006", required = true, dataType = "Long", paramType = "path")
     	})
     public ResObject view(@PathVariable Long id) {
     	try {

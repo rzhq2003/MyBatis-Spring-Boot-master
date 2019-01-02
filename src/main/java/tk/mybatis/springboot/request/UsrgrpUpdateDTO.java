@@ -11,7 +11,7 @@ public class UsrgrpUpdateDTO {
 	@ApiModelProperty(name = "usrgrpid",required = true,value = "usrgrpid必填段", example = "1", position = 1)
 	private Long usrgrpid;
 
-	@ApiModelProperty(name = "name",example = "泉州区", position = 2)
+	@ApiModelProperty(name = "name", value = "用户组名称", example = "泉州区", position = 2)
 	private String name;
 	
 	@ApiModelProperty(position = 3)

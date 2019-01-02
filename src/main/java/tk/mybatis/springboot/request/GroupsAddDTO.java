@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "GroupsAddDTO", description = "门店组对象")
 public class GroupsAddDTO {
 	
-	@ApiModelProperty(name = "name",example = "福州区", position = 1)
+	@ApiModelProperty(name = "name", value = "门店组名称", example = "福州区", position = 1)
     private String name;
 	
 	@ApiModelProperty(position = 2)

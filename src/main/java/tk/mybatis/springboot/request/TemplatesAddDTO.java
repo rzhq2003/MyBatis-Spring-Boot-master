@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "TemplatesAddDTO", description = "模板对象")
 public class TemplatesAddDTO {
     
-    @ApiModelProperty(name = "name", example = "收银机参数组", position = 1)
+    @ApiModelProperty(name = "name", value = "模板名称", example = "收银机参数组", position = 1)
     private String name;
 
     @ApiModelProperty(name = "description", example = "无", position = 2)

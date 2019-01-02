@@ -12,10 +12,10 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "HostsAddDTO", description = "主机对象")
 public class HostsAddDTO {
     
-    @ApiModelProperty(name = "host", example = "XM0005", position = 1)
+    @ApiModelProperty(name = "host", value = "主机号", example = "XM0005", position = 1)
     private String host;
 	
-    @ApiModelProperty(name = "name", example = "海天店", position = 2)
+    @ApiModelProperty(name = "name", value = "主机名", example = "海天店", position = 2)
     private String name;
 
     @ApiModelProperty(name = "description", example = "无", position = 3)
@@ -25,7 +25,7 @@ public class HostsAddDTO {
     @ApiModelProperty(hidden = true)
     private Integer status = 0;
     
-    @ApiModelProperty(name = "groupids",value= "不能为空", position = 4)
+    @ApiModelProperty(name = "groupids",value= "主机组,不能为空", position = 4)
     private Long[] groupids;
     
 

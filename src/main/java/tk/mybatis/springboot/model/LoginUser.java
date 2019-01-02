@@ -15,6 +15,7 @@ public class LoginUser {
 	@ApiModelProperty(value = "用户密码",name = "password", example = "123456")
     private String password;
 	
+	@ApiModelProperty(value = "记住用户,0 忘记或1 记住",name = "rememberMe", example = "0")
     private Integer rememberMe;
 
     public String getUsername() {

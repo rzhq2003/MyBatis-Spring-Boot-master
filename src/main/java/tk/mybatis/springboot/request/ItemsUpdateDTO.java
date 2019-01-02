@@ -9,7 +9,7 @@ public class ItemsUpdateDTO {
 	@ApiModelProperty(name = "itemid", value = "不能为空", example = "3", position = 1, required = true)
     private Long itemid;
 	
-	@ApiModelProperty(name = "name", example = "参数1", position = 2)
+	@ApiModelProperty(name = "name", value = "参数名称", example = "参数1", position = 2)
     private String name;
 	
 	@ApiModelProperty(example = "无", position = 3)

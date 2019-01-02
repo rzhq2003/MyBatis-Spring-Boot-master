@@ -12,23 +12,23 @@ import tk.mybatis.springboot.model.UsersGroups;
 @ApiModel(value = "UsersAddDTO", description = "用户对象")
 public class UsersAddDTO {
 
-    @ApiModelProperty(name = "username",example = "80006877", position = 1)
+    @ApiModelProperty(name = "username", value = "用户帐号", example = "80006877", position = 1)
     private String username;
     
-    @ApiModelProperty(name = "name",example = "张三", position = 2)
+    @ApiModelProperty(name = "name", value = "用户名称", example = "张三", position = 2)
     private String name;
 
-    @ApiModelProperty(name = "password",example = "123456", position = 3)
+    @ApiModelProperty(name = "password", value = "用户密码", example = "123456", position = 3)
     @JSONField(serialize = false) // 结果不被输出
     private String password;
 
     @ApiModelProperty(name = "enabled",example = "0", position = 4)
     private Integer enabled;
     
-    @ApiModelProperty(name = "role",example = "3", position = 5)
+    @ApiModelProperty(name = "role", value = "角色:1管理员 2用户 3客户", example = "3", position = 5)
     private Integer role;
     
-    @ApiModelProperty(position = 6)
+    @ApiModelProperty(position = 6, value = "用户组")
     private List<UsersGroups> usrgrps;
 
 	public String getUsername() {
