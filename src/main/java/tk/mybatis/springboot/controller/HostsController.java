@@ -118,10 +118,15 @@ public class HostsController {
 			@ApiImplicitParam(name = "ids", value = "用户id逗号分隔，如1,2,3", required = true, dataType = "String", paramType = "path") })
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResObject delete(@PathVariable String ids) {
-		hostsService.deleteByIds(ids);
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("hostids", ids);
-		return new ResObject(200, jsonObject);
+		try {
+			hostsService.deleteByIds(ids);
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("hostids", ids);
+			return new ResObject(200, jsonObject);
+		} catch (Exception e) {
+			return new ResObject(400, "操作异常");
+		}
+
 	}
 	
     @ApiOperation(value = "门店详情", notes = "门店详情",produces = "application/json")

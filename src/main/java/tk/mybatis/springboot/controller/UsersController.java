@@ -145,19 +145,23 @@ public class UsersController {
     	})
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResObject update(@RequestBody UsersUpdateDTO usersUpdateDTO) {
-    	if (MyUtils.notEmpty(usersUpdateDTO.getUserid())) {
-        	Users users = new Users();
-        	BeanUtils.copyProperties(usersUpdateDTO, users);
-    		if (MyUtils.notEmpty(users.getPassword())) {
-    			users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
-    		}
-        	Integer re = usersService.updateById(users);
-        	JSONObject jsonObject = new JSONObject();
-        	jsonObject.put("userid", users.getUserid());
-            return new ResObject(200, jsonObject, re.toString());    
-    	} else {
-    		return new ResObject(400, "userid不能为空");  
-    	}
+    	try {
+        	if (MyUtils.notEmpty(usersUpdateDTO.getUserid())) {
+            	Users users = new Users();
+            	BeanUtils.copyProperties(usersUpdateDTO, users);
+        		if (MyUtils.notEmpty(users.getPassword())) {
+        			users.setPassword(bCryptPasswordEncoder.encode(users.getPassword()));
+        		}
+            	Integer re = usersService.updateById(users);
+            	JSONObject jsonObject = new JSONObject();
+            	jsonObject.put("userid", users.getUserid());
+                return new ResObject(200, jsonObject, re.toString());    
+        	} else {
+        		return new ResObject(400, "userid不能为空");  
+        	}
+		} catch (Exception e) {
+			return new ResObject(400, "操作异常");
+		}
 
     }
    
@@ -170,10 +174,15 @@ public class UsersController {
     	})
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject delete(@PathVariable String ids) {
+    	try {
     		usersService.deleteByIds(ids);
     		JSONObject jsonObject = new JSONObject();
     		jsonObject.put("userids", ids);
     		return new ResObject(200,jsonObject);
+		} catch (Exception e) {
+			return new ResObject(400, "操作异常");
+		}
+
     }
     
 

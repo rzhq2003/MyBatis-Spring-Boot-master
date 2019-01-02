@@ -13,10 +13,10 @@ import tk.mybatis.springboot.model.HistoryItems;
 @ApiModel(value = "HistoryAddDTO", description = "参数值对象")
 public class HistoryAddDTO {
 	
-	@ApiModelProperty(name = "templateid", value = "不能为空", example = "1004", position = 1, required = true)
+	@ApiModelProperty(name = "templateid", value = "不能为空", example = "1006", position = 1, required = true)
 	private Long templateid;
 	
-	@ApiModelProperty(name = "hostid", value = "不能为空", example = "1006", position = 2, required = true)
+	@ApiModelProperty(name = "hostid", value = "不能为空", example = "1004", position = 2, required = true)
 	private Long hostid;
 	
 	@ApiModelProperty(position = 3, required = true)

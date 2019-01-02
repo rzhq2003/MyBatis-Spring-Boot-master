@@ -48,9 +48,11 @@ import io.swagger.annotations.ApiOperation;
 
 import tk.mybatis.springboot.model.History;
 import tk.mybatis.springboot.model.HistoryItems;
+import tk.mybatis.springboot.model.Hosts;
 import tk.mybatis.springboot.model.Items;
 import tk.mybatis.springboot.model.Pages;
 import tk.mybatis.springboot.request.HistoryAddDTO;
+import tk.mybatis.springboot.request.HistoryUpdateDTO;
 import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.HistoryItemsService;
 import tk.mybatis.springboot.service.HistoryService;
@@ -59,8 +61,12 @@ import tk.mybatis.springboot.service.HostsService;
 import tk.mybatis.springboot.service.ItemsService;
 import tk.mybatis.springboot.util.MyUtils;
 
+
+
+
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -121,28 +127,27 @@ public class HistoryController {
 		
 		List<Map<String, Object>> listMap = new ArrayList<Map<String,Object>>();
 		for (int i = 0; i < list.size(); i++) {
-			Map<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new LinkedHashMap<String, Object>();
 			map.put("hostid", list.get(i).getHostid());
 			map.put("sheetid", list.get(i).getSheetid());
-
-			HistoryItems historyItems = new HistoryItems();
-			historyItems.setSheetid(list.get(i).getSheetid());
+			
 			List<HistoryItems> listItems = new ArrayList<HistoryItems>();
-			listItems = historyItemsService.select(historyItems);
+			listItems = historyItemsService.getBySheetid(list.get(i).getSheetid());
 			System.out.println(JSONObject.toJSONString(listItems));
 			List<Map<String, Object>> listMaps = new ArrayList<Map<String,Object>>();
 			for (int j = 0; j < listItems.size(); j++) {
 				Items items = new Items();
 				items = itemsService.getById(listItems.get(j).getItemid());
-				Map<String, Object> maps = new HashMap<String, Object>();
-				maps.put("historyitemid", listItems.get(j).getHistoryitemid());
+				Map<String, Object> maps = new LinkedHashMap<String, Object>();
+				maps.put("itemid",items.getItemid());
 				maps.put("name", items.getName());
+				maps.put("historyitemid", listItems.get(j).getHistoryitemid());
 				maps.put("value", listItems.get(j).getValue());
 				maps.put("clock", listItems.get(j).getClock());
 				listMaps.add(maps);
 			}
 	
-			map.put("values", listMaps);
+			map.put("items", listMaps);
 
 			listMap.add(map);
 		}   
@@ -187,6 +192,123 @@ public class HistoryController {
 		}
 		
 	}
+	
+	
+	@ApiOperation(value = "参数值更新", notes = "参数值更新",produces = "application/json")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
+    	})
+    @RequestMapping(value = "/update", method = RequestMethod.POST)//接口基本路径
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    // json格式传递对象使用RequestBody注解
+    @Transactional(rollbackOn = Exception.class)
+    public ResObject update(@RequestBody HistoryUpdateDTO historyUpdateDTO) {
+		try {
+			String sheetid = historyUpdateDTO.getSheetid();
+			if (MyUtils.notEmpty(sheetid)) {
+				List<HistoryItems> list = new ArrayList<HistoryItems>();
+				list = historyUpdateDTO.getListItems();
+				for (int i = 0; i < list.size(); i++) {
+					Long itemid = list.get(i).getItemid();
+					if (MyUtils.notEmpty(itemid)) {
+						HistoryItems historyItems = new HistoryItems();
+						historyItems.setSheetid(sheetid);
+						historyItems.setItemid(itemid);
+						String historyitemid = historyItemsService.getIds(historyItems);
+						if (MyUtils.notEmpty(historyitemid)) {
+							historyItems.setHistoryitemid(Long.parseLong(historyitemid));
+						}
+						historyItems.setValue(list.get(i).getValue());
+						historyItems.setClock(System.currentTimeMillis());
+						historyItemsService.saveAndUpdate(historyItems);
+					}
+				}
+				JSONObject jsonObject = new JSONObject(true);
+				jsonObject.put("sheetid", sheetid);
+				return new ResObject(200, jsonObject);
+			} else {
+				return new ResObject(400, "sheetid不能为空");
+				
+			}
+
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
+	        return new ResObject(400, "操作异常");
+		}		
+	}
+	
+	
+    @ApiOperation(value = "参数值删除", notes = "参数值删除", produces = "application/json")
+    @RequestMapping(value = "/delete/{sheetids}", method = RequestMethod.DELETE)
+    @ApiImplicitParams({ 
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
+    	@ApiImplicitParam(name = "sheetids", value = "用户sheetids逗号分隔，如123456789123456789", required = true, dataType = "String", paramType = "path") 
+    	})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResObject delete(@PathVariable String sheetids) {   	
+    	try {
+        	String[] strArr = sheetids.split(",");
+        	if (MyUtils.notEmpty(strArr)) {
+        		for (int i = 0; i < strArr.length; i++) {
+            		History history = new History();
+            		history.setSheetid(strArr[i]);
+            		if (MyUtils.notEmpty(history)) {
+            			historyService.delete(history);
+            		}
+    			}
+        	}
+        	return new ResObject(200, sheetids);
+		} catch (Exception e) {
+			return new ResObject(400, "操作异常");
+		}
+    }
+    
+    @ApiOperation(value = "参数值详情", notes = "参数值详情", produces = "application/json")
+    @RequestMapping(value = "/view/{sheetid}", method = RequestMethod.DELETE)
+    @ApiImplicitParams({ 
+    	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
+    	@ApiImplicitParam(name = "sheetid", value = "如123456789123456789", required = true, dataType = "String", paramType = "path") 
+    	})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResObject view(@PathVariable String sheetid) {
+    	try {
+        	History history = new History();
+        	history.setSheetid(sheetid);
+        	history = historyService.selectOne(history);
+        	Long hostid = history.getHostid();
+        	Hosts hosts =new Hosts();
+            hosts.setHostid(hostid);
+            hosts = hostsService.selectOne(hosts);
+            List<Map<String, Object>> listMap = new ArrayList<Map<String,Object>>();
+            Map<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("hostid", hostid);
+            map.put("name", hosts.getName());
+            
+
+			List<HistoryItems> listItems = new ArrayList<HistoryItems>();
+			listItems = historyItemsService.getBySheetid(sheetid);
+			System.out.println(JSONObject.toJSONString(listItems));
+			List<Map<String, Object>> listMaps = new ArrayList<Map<String,Object>>();
+			for (int j = 0; j < listItems.size(); j++) {
+				Items items = new Items();
+				items = itemsService.getById(listItems.get(j).getItemid());
+				Map<String, Object> maps = new LinkedHashMap<String, Object>();
+				maps.put("itemid",items.getItemid());
+				maps.put("name", items.getName());
+				maps.put("historyitemid", listItems.get(j).getHistoryitemid());
+				maps.put("value", listItems.get(j).getValue());
+				maps.put("clock", listItems.get(j).getClock());
+				listMaps.add(maps);
+			}
+			
+			map.put("items", listMaps);
+			listMap.add(map); 
+        	return new ResObject(200, listMap);
+		} catch (Exception e) {
+			return new ResObject(400, "操作异常");
+		}
+    }
 
 }
 

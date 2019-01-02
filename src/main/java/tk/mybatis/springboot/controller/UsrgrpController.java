@@ -263,10 +263,15 @@ public class UsrgrpController {
     	})
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject delete(@PathVariable String ids) {
+    	try {
     		usrgrpService.deleteByIds(ids);
     		JSONObject jsonObject = new JSONObject();
     		jsonObject.put("usrgrpids", ids);
     		return new ResObject(200, jsonObject);
+		} catch (Exception e) {
+			return new ResObject(400, "操作异常");
+		}
+
     }
     
 

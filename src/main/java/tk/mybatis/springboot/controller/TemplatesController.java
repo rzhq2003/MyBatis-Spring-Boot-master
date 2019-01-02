@@ -192,7 +192,7 @@ public class TemplatesController {
     		JSONObject jsonObject = new JSONObject(true);
     		jsonObject.put("templateid", hosts.getHostid());
     		jsonObject.put("name", hosts.getName());
-    		jsonObject.put("items", itemsService.select(items));
+    		jsonObject.put("params", itemsService.select(items));
     		return new ResObject(200, jsonObject);
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
@@ -210,10 +210,15 @@ public class TemplatesController {
     	})
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject delete(@PathVariable String ids) {
+    	try {
     		hostsService.deleteByIds(ids);
     		JSONObject jsonObject = new JSONObject();
     		jsonObject.put("templateids", ids);
     		return new ResObject(200,jsonObject, "1");
+		} catch (Exception e) {
+			return new ResObject(400, "操作异常"); 
+		}
+
     }
 }
 

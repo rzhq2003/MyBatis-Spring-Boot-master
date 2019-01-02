@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2018-12-29 15:42:31
+Date: 2019-01-02 14:51:39
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -25,7 +25,7 @@ CREATE TABLE `groups` (
   `enable` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`groupid`),
   KEY `groups_1` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of groups
@@ -55,9 +55,6 @@ CREATE TABLE `history` (
 -- ----------------------------
 -- Records of history
 -- ----------------------------
-INSERT INTO `history` VALUES ('1004', '1006', '1004', '123456789123456789');
-INSERT INTO `history` VALUES ('1006', '1006', '1005', '123456789123456788');
-INSERT INTO `history` VALUES ('1008', '1006', '1004', '123456789123456786');
 
 -- ----------------------------
 -- Table structure for `history_items`
@@ -74,20 +71,11 @@ CREATE TABLE `history_items` (
   KEY `history_items_2` (`sheetid`) USING BTREE,
   CONSTRAINT `c_history_items_1` FOREIGN KEY (`itemid`) REFERENCES `items` (`itemid`) ON DELETE CASCADE,
   CONSTRAINT `c_history_items_2` FOREIGN KEY (`sheetid`) REFERENCES `history` (`sheetid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1021 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1025 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of history_items
 -- ----------------------------
-INSERT INTO `history_items` VALUES ('1011', '123456789123456789', '10003', '11', '0');
-INSERT INTO `history_items` VALUES ('1012', '123456789123456789', '10004', '12', '0');
-INSERT INTO `history_items` VALUES ('1013', '123456789123456789', '10007', '13', '0');
-INSERT INTO `history_items` VALUES ('1014', '123456789123456788', '10003', '14', '0');
-INSERT INTO `history_items` VALUES ('1015', '123456789123456788', '10004', '15', '0');
-INSERT INTO `history_items` VALUES ('1016', '123456789123456788', '10007', '16', '0');
-INSERT INTO `history_items` VALUES ('1018', '123456789123456786', '10003', '22', '0');
-INSERT INTO `history_items` VALUES ('1019', '123456789123456786', '10004', '33', '0');
-INSERT INTO `history_items` VALUES ('1020', '123456789123456786', '10007', '44', '0');
 
 -- ----------------------------
 -- Table structure for `hosts`
@@ -128,7 +116,7 @@ CREATE TABLE `hosts_groups` (
   KEY `hosts_groups_2` (`groupid`),
   CONSTRAINT `c_hosts_groups_1` FOREIGN KEY (`hostid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE,
   CONSTRAINT `c_hosts_groups_2` FOREIGN KEY (`groupid`) REFERENCES `groups` (`groupid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of hosts_groups
@@ -151,14 +139,15 @@ CREATE TABLE `items` (
   UNIQUE KEY `items_1` (`templateid`,`name`) USING BTREE,
   KEY `items_2` (`templateid`) USING BTREE,
   CONSTRAINT `c_items_1` FOREIGN KEY (`templateid`) REFERENCES `hosts` (`hostid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1005 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of items
 -- ----------------------------
-INSERT INTO `items` VALUES ('10003', '1006', '参数1', '', '0');
-INSERT INTO `items` VALUES ('10004', '1006', '参数2', '', '0');
-INSERT INTO `items` VALUES ('10007', '1006', '参数3', '无', '0');
+INSERT INTO `items` VALUES ('1001', '1006', '参数1', '', '0');
+INSERT INTO `items` VALUES ('1002', '1006', '参数2', '', '0');
+INSERT INTO `items` VALUES ('1003', '1006', '参数3', '无', '0');
+INSERT INTO `items` VALUES ('1004', '1006', '参数4', '无', '0');
 
 -- ----------------------------
 -- Table structure for `rights`
@@ -195,7 +184,7 @@ CREATE TABLE `users` (
   `enabled` int(11) NOT NULL DEFAULT '0' COMMENT '帐户可用',
   PRIMARY KEY (`userid`),
   UNIQUE KEY `users_1` (`username`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1002 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1003 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of users
@@ -203,6 +192,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` VALUES ('5', 'admin', 'admin', '$2a$10$P4R6JlhTFKn2J3m9qFpJte1V7WJSBX5.ACNqrATTo/VCUEXUQF/oy', '1', '0');
 INSERT INTO `users` VALUES ('31', '80006877', '张三', '$2a$10$dR/QJc1X48BlfO6zvnxZ1e6EKZKk8HAGymu5stD5sEdjc2WDA/6nS', '3', '0');
 INSERT INTO `users` VALUES ('1000', '80006873', '张四', '$2a$10$WWf0wjhfLXxlnTuqtThzmu5U0WVj8Sd3HdHItHjbKlJhuqgQBWRx2', '2', '0');
+INSERT INTO `users` VALUES ('1002', '80006354', '陈翔煜', '$2a$10$LNDuyAsWYoIwNOViIAcfmO.EOM9imwYU0ElD9Ub8KpExL9ozJxyKK', '1', '0');
 
 -- ----------------------------
 -- Table structure for `users_groups`
@@ -217,7 +207,7 @@ CREATE TABLE `users_groups` (
   KEY `users_groups_2` (`userid`),
   CONSTRAINT `c_users_groups_1` FOREIGN KEY (`usrgrpid`) REFERENCES `usrgrp` (`usrgrpid`) ON DELETE CASCADE,
   CONSTRAINT `c_users_groups_2` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1002 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of users_groups
@@ -225,6 +215,7 @@ CREATE TABLE `users_groups` (
 INSERT INTO `users_groups` VALUES ('31', '5', '1');
 INSERT INTO `users_groups` VALUES ('34', '31', '1');
 INSERT INTO `users_groups` VALUES ('1000', '1000', '1');
+INSERT INTO `users_groups` VALUES ('1001', '1002', '1');
 INSERT INTO `users_groups` VALUES ('2', '5', '2');
 INSERT INTO `users_groups` VALUES ('3', '5', '3');
 INSERT INTO `users_groups` VALUES ('48', '5', '5');
@@ -239,7 +230,7 @@ CREATE TABLE `usrgrp` (
   `enable` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`usrgrpid`),
   UNIQUE KEY `usrgrp_1` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of usrgrp

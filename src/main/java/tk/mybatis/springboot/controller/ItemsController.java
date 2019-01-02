@@ -87,10 +87,10 @@ public class ItemsController {
 
 	
     // 获取用户列表
-    @ApiOperation(value = "参数项列表", notes = "参数项列表",produces = "application/json")
+    @ApiOperation(value = "模板参数列表", notes = "模板参数列表",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
-    	@ApiImplicitParam(name = "templateid", required = true, dataType = "Long", paramType = "path")
+    	@ApiImplicitParam(name = "templateid", value = "1006", required = true, dataType = "Long", paramType = "path")
     	})
     @RequestMapping(value = "{templateid}", method = RequestMethod.GET)//接口基本路径
     // json格式传递对象使用RequestBody注解
@@ -102,7 +102,7 @@ public class ItemsController {
     }
 	
 
-	@ApiOperation(value = "参数项创建", notes = "参数项创建",produces = "application/json")
+	@ApiOperation(value = "模板参数创建", notes = "模板参数创建",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
@@ -138,7 +138,7 @@ public class ItemsController {
 	}
 	
     // 获取用户列表
-	@ApiOperation(value = "参数项更新", notes = "参数项更新",produces = "application/json")
+	@ApiOperation(value = "模板参数更新", notes = "模板参数更新",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})
@@ -169,7 +169,7 @@ public class ItemsController {
 		}
     }
     
-    @ApiOperation(value = "参数项删除", notes = "参数项删除", produces = "application/json")
+    @ApiOperation(value = "模板参数删除", notes = "模板参数删除", produces = "application/json")
     @RequestMapping(value = "/delete/{ids}", method = RequestMethod.DELETE)
     @ApiImplicitParams({ 
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
@@ -177,13 +177,17 @@ public class ItemsController {
     	})
     @PreAuthorize("hasRole('ADMIN')")
     public ResObject delete(@PathVariable String ids) {
+    	try {
     		itemsService.deleteByIds(ids);
     		JSONObject jsonObject = new JSONObject();
     		jsonObject.put("itemids", ids);
     		return new ResObject(200,jsonObject);
+		} catch (Exception e) {
+			return new ResObject(400, "操作异常");
+		}
     }
     
-    @ApiOperation(value = "参数项详情", notes = "参数项详情",produces = "application/json")
+    @ApiOperation(value = "模板参数详情", notes = "模板参数详情",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header"),
     	@ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Long", paramType = "path")
