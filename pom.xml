@@ -60,11 +60,17 @@
         </dependency>
 
 		<!-- 引进网页框架.html -->
-        <dependency>
+<!--         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>              
-        </dependency>
+        </dependency> -->
         
+        <!-- html访问-->
+ 		<dependency> 
+ 			<groupId>org.springframework.boot</groupId> 
+ 			<artifactId>spring-boot-starter-thymeleaf</artifactId> 
+ 		</dependency>
+  
         <!--commons相关的jar包-->
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>

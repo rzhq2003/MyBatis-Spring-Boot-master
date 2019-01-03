@@ -20,33 +20,24 @@ spring:
         password: 123456
         # 使用druid数据源
         type: com.alibaba.druid.pool.DruidDataSource
-        driver-class-name: com.mysql.jdbc.Driver
-        filters: stat
-        maxActive: 20
-        initialSize: 1
-        maxWait: 60000
-        minIdle: 1
-        timeBetweenEvictionRunsMillis: 60000
-        minEvictableIdleTimeMillis: 300000
-        validationQuery: select 'x'
-        testWhileIdle: true
-        testOnBorrow: false
-        testOnReturn: false
-        poolPreparedStatements: true
-        maxOpenPreparedStatements: 20
+        driver-class-name: com.mysql.jdbc.Driver    
+
+    http:
+        encoding:
+            charset: utf8
+            force: true
+            enabled: true
     mvc:
-        thymeleaf:
-           prefix: /templates/
-           suffix: .ftl
+        view:
+            prefix: /templates/
+            suffix: .html
+            
     freemarker:
         cache: false
         request-context-attribute: request
 
-    http:
-        encoding:
-            charset: gbk
-            force: true
-            enabled: true
+
+
 
 
 #以下属性不可用

@@ -57,6 +57,7 @@ public class AuthController {
 
 	@Autowired
 	HttpServletResponse response;
+	
 
 	@ApiOperation(value = "用户注册", notes = "用户注册", produces = "application/json")
 	@RequestMapping(value = "/register", method = RequestMethod.POST)

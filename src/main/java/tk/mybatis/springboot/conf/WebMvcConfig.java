@@ -30,9 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -53,6 +55,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");      
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**") .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/templates/**").addResourceLocations("classpath:/templates/");
 
     }
 
@@ -84,7 +87,13 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	}
 
-
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addRedirectViewController("/web","/templates/login.html");
+        registry.addStatusController("/403", HttpStatus.FORBIDDEN);
+        super.addViewControllers(registry);
+    }
+	
 //    @Override
 //    public void configureViewResolvers(ViewResolverRegistry registry) {
 //        registry.enableContentNegotiation(new MappingJackson2JsonView());
@@ -97,4 +106,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 //        configurer.setTemplateLoaderPath("/WEB-INF/");
 //        return configurer;
 //    }
+	
+	
 }
