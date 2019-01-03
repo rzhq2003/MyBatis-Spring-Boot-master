@@ -1,10 +1,118 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>第一个HTML页面</title>
+<meta charset="utf-8">
+<title>配置中心</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+
+<link rel="stylesheet" href="/static/css/x-admin.css" media="all">
+<link rel="stylesheet" href="/static/plugins/layui/css/layui.css"> 
 </head>
-<body>
-	<h1>Hello Spring Boot!!!</h1>
+
+<body style="background-color: #393D49">
+	<div class="x-box">
+		<div class="x-top">
+			<i class="layui-icon x-login-close"> &#x1007; </i>
+			<ul class="x-login-right">
+				<li style="background-color: #F1C85F;" color="#F1C85F"></li>
+				<li style="background-color: #EA569A;" color="#EA569A"></li>
+				<li style="background-color: #393D49;" color="#393D49"></li>
+			</ul>
+		</div>
+		<div class="x-mid">
+			<div class="x-avtar">
+				<img src="/static/images/logo.png" alt="">
+			</div>
+			<div class="input">
+				<form class="layui-form">
+					<div class="layui-form-item x-login-box">
+						<label for="username" class="layui-form-label"> 
+						<i class="layui-icon">&#xe612;</i> </label>
+						<div class="layui-input-inline">
+							<input type="text" id="username" name="username" lay-verify="username" autocomplete="off" placeholder="username" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item x-login-box">
+						<label for="password" class="layui-form-label"> 
+						<i class="layui-icon">&#xe628;</i> </label>
+						<div class="layui-input-inline">
+							<input type="password" id="password" name="password" lay-verify="password" autocomplete="off" placeholder="******" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item x-login-box">
+						<label for="rememberMe" class="layui-form-label"> 
+						<i class="layui-icon">&#xe614;</i> </label>
+						<div class="layui-input-inline">
+							<input type="checkbox" id="rememberMe" name="rememberMe" lay-skin="switch" lay-text="ON|OFF">
+						</div>
+					</div>
+									
+					<div class="layui-form-item" id="loginbtn">
+						<button class="layui-btn" lay-filter="save" lay-submit="">登 录</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<p style="color:#fff;text-align: center;">Copyright © 2017.Company name All rights X-admin</p>
+<script src="/static/plugins/layui/layui.js"></script>   
+<script>
+	layui.use(['form','layedit','jquery'],
+	function() {
+		var $ = layui.$ //重点处
+		var form = layui.form
+		,layer = layui.layer
+	 	,layedit = layui.layedit;
+
+		$('.x-login-right li').click(function(event) {
+			color = $(this).attr('color');
+			$('body').css('background-color', color);
+		});
+		
+		//创建一个编辑器
+  		var editIndex = layedit.build('LAY_demo_editor');
+		
+		//自定义验证规则
+		form.verify({
+		  username: [/(^admin$|^8\d{7}$)/, '帐号8位数字'],
+		  password: [/(.+){3,12}$/, '密码必须6到12位']
+		});
+	
+		//监听提交
+		form.on('submit(save)',function(data) {
+			var data=eval('('+JSON.stringify(data.field)+')');
+			if (data["rememberMe"] == null) {
+				data["rememberMe"] = 0;
+			} else {
+				data["rememberMe"] = 1;
+			}
+			$.ajax({
+				timeout: 1000,
+				type : 'POST', // 请求方式；
+				url : 'http://10.4.0.57:3333/auth/login', // 请求url；
+				data : JSON.stringify(data),
+				dataType:'JSON',
+				async:false,//要返回值必须定义这个为同步；
+				error : function(){
+					console.log('error');
+				},
+				success : function(data) { // 请求成功回 调的函数；
+ 				if(data.code == 200){				
+					location.href = "index.html";
+				}else{
+					layer.alert("登录失败...");
+				}; 
+				}
+			});	
+			return false;
+		});
+	
+	});
+</script>
 </body>
 </html>
