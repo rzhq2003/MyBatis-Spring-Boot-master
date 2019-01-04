@@ -48,7 +48,7 @@
 						<label for="rememberMe" class="layui-form-label"> 
 						<i class="layui-icon">&#xe614;</i> </label>
 						<div class="layui-input-inline">
-							<input type="checkbox" id="rememberMe" name="rememberMe" lay-skin="switch" lay-text="ON|OFF">
+							<input type="checkbox" id="rememberMe" name="rememberMe" lay-skin="switch" value="1" lay-text="ON|OFF">
 						</div>
 					</div>
 									
@@ -62,57 +62,55 @@
 	<p style="color:#fff;text-align: center;">Copyright © 2017.Company name All rights X-admin</p>
 <script src="/static/plugins/layui/layui.js"></script>   
 <script>
-	layui.use(['form','layedit','jquery'],
-	function() {
-		var $ = layui.$ //重点处
-		var form = layui.form
-		,layer = layui.layer
-	 	,layedit = layui.layedit;
+layui.use(['form','layedit','jquery'],
+function() {
+	var $ = layui.$ //重点处
+	var form = layui.form
+	,layer = layui.layer
+ 	,layedit = layui.layedit;
 
-		$('.x-login-right li').click(function(event) {
-			color = $(this).attr('color');
-			$('body').css('background-color', color);
-		});
-		
-		//创建一个编辑器
-  		var editIndex = layedit.build('LAY_demo_editor');
-		
-		//自定义验证规则
-		form.verify({
-		  username: [/(^admin$|^8\d{7}$)/, '帐号8位数字'],
-		  password: [/(.+){3,12}$/, '密码必须6到12位']
-		});
-	
-		//监听提交
-		form.on('submit(save)',function(data) {
-			var data=eval('('+JSON.stringify(data.field)+')');
-			if (data["rememberMe"] == null) {
-				data["rememberMe"] = 0;
-			} else {
-				data["rememberMe"] = 1;
-			}
-			$.ajax({
-				timeout: 1000,
-				type : 'POST', // 请求方式；
-				url : 'http://10.4.0.57:3333/auth/login', // 请求url；
-				data : JSON.stringify(data),
-				dataType:'JSON',
-				async:false,//要返回值必须定义这个为同步；
-				error : function(){
-					console.log('error');
-				},
-				success : function(data) { // 请求成功回 调的函数；
- 				if(data.code == 200){				
-					location.href = "index.html";
-				}else{
-					layer.alert("登录失败...");
-				}; 
-				}
-			});	
-			return false;
-		});
-	
+	$('.x-login-right li').click(function(event) {
+		color = $(this).attr('color');
+		$('body').css('background-color', color);
 	});
+	
+	//创建一个编辑器
+ 	var editIndex = layedit.build('LAY_demo_editor');
+	
+	//自定义验证规则
+	form.verify({
+	  username: [/(^admin$|^8\d{7}$)/, '帐号8位数字'],
+	  password: [/(.+){3,12}$/, '密码必须6到12位']
+	});
+	
+
+	//监听提交
+	form.on('submit(save)',function(data) {
+		if (data.field["rememberMe"] == null) {
+			data.field["rememberMe"] = "0";
+		}
+		$.ajax({
+			timeout: 1000,
+			type : 'POST', // 请求方式；
+			url : 'http://10.4.0.57:3333/auth/login', // 请求url；
+			data : JSON.stringify(data.field),
+			dataType:'JSON',
+			async:false,//要返回值必须定义这个为同步；
+			error : function(){
+				console.log('error');
+			},
+			success : function(data) { // 请求成功回 调的函数；
+				if(data.code == 200){				
+				location.href = "index.html";
+			}else{
+				layer.alert("登录失败...");
+			}; 
+			}
+		});	
+		return false;
+	});
+	
+});
 </script>
 </body>
 </html>
