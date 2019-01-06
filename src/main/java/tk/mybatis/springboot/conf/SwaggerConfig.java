@@ -41,6 +41,7 @@ public class SwaggerConfig {
 				,new Tag("history-module-resource", "参数值管理")
 				,new Tag("groups-module-resource", "门店组管理")
 				,new Tag("hosts-module-resource", "门店管理")
+				,new Tag("import-module-resource", "数据导入")
 				};
 		return tags;
 	}

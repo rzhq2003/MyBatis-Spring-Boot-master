@@ -97,7 +97,7 @@ public class TemplatesController {
 
     
     // add update delete view list
-    @ApiOperation(value = "模板列表", notes = "模板列表",produces = "application/json")
+    @ApiOperation(value = "模板列表(不分页)", notes = "模板列表(不分页)",produces = "application/json")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "Authorization", value = "授权信息：bearer token", dataType = "string", paramType = "header")
     	})

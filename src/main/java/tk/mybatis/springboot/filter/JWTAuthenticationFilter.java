@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -78,8 +78,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 按照jwt的规定，最后请求的时候应该是 `Bearer token`
         response.setCharacterEncoding("utf-8");
         response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
         map.put("Authorization", JwtTokenUtils.TOKEN_PREFIX + token);
+        map.put("username", JwtTokenUtils.getUsername(token));
+        map.put("role", JwtTokenUtils.getUserRole(token).replace("ROLE_", ""));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", 200);
         jsonObject.put("data", map);
