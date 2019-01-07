@@ -25,14 +25,6 @@
 package tk.mybatis.springboot.controller;
 
 
-
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -48,6 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.druid.sql.ast.statement.SQLIfStatement.ElseIf;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -69,7 +62,7 @@ import tk.mybatis.springboot.response.ResObject;
 import tk.mybatis.springboot.service.HistoryItemsService;
 import tk.mybatis.springboot.service.HistoryService;
 import tk.mybatis.springboot.service.HostsService;
-
+import tk.mybatis.springboot.service.ImportService;
 import tk.mybatis.springboot.service.ItemsService;
 import tk.mybatis.springboot.util.ExcelImportUtils;
 import tk.mybatis.springboot.util.MyUtils;
@@ -77,12 +70,13 @@ import tk.mybatis.springboot.util.MyUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.NumberFormat;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -110,6 +104,9 @@ public class HistoryController {
 	
 	@Autowired
 	HostsService hostsService;
+	
+	@Autowired
+	ImportService importService;
 	
 
 	
@@ -185,20 +182,8 @@ public class HistoryController {
     @Transactional(rollbackOn = Exception.class)
     public ResObject add(@RequestBody HistoryAddDTO historyAddDTO) {
 		try {
-			String sheetid = MyUtils.getOrderIdByUUId();
-			History history = new History();
-			history.setSheetid(sheetid);
-			BeanUtils.copyProperties(historyAddDTO, history);
-			historyService.save(history);
-			List<HistoryItems> list = new ArrayList<HistoryItems>();
-			list = historyAddDTO.getListItems();
-			for (int i = 0; i < list.size(); i++) {
-				list.get(i).setSheetid(sheetid);
-				list.get(i).setClock(System.currentTimeMillis());
-			}
-			historyItemsService.saves(list);
-			return new ResObject(200, history);
-			
+			History history = historyService.add(historyAddDTO);
+			return new ResObject(200, history);			
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
 	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
@@ -324,12 +309,6 @@ public class HistoryController {
 		}
     }
 
-	/**
-	 * 导入会员信息
-	 * 
-	 * @param file
-	 * @return
-	 */
 
 	@ApiOperation(value = "Excel数据导入", notes = "Excel数据导入", produces = "application/json")
     @RequestMapping(value = "importExcel", method = RequestMethod.POST)
@@ -338,84 +317,47 @@ public class HistoryController {
     	})   
     @ResponseBody
     @Transactional(rollbackOn = Exception.class)
-	public Object importExcel(@RequestParam(value = "filename") MultipartFile file) {
-
-    	System.out.println(file.isEmpty());
-		if (file.isEmpty()) {
-			return new ResObject(400, "文件为空!");
-		}
-		InputStream is = null;
+	public Object importExcel(@RequestParam(value = "filename") MultipartFile file) {		
 		try {
-			
-			is = file.getInputStream();
-			// 获取文件名
-			String fileName = file.getOriginalFilename();
-
-			// 根据版本选择创建Workbook的方式
-			Workbook workbook = null;
-			Sheet sheet = null;
-	        Row row = null;
-	        Cell cell = null;
-	        Cell biaoti = null;
-	        
-	        //double转String
-	        NumberFormat ds = NumberFormat.getInstance();
-	        
-			// 根据文件名判断文件是2003版本还是2007版本
-			if (ExcelImportUtils.isExcel2007(fileName)) {
-				workbook = new XSSFWorkbook(is);
-			} else {
-				workbook = new HSSFWorkbook(is);
+			if (file.isEmpty()) {
+				return new ResObject(400, "文件为空!");
 			}
-
-			List<Map<String, Object>> listMap = new ArrayList<Map<String,Object>>();
-			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-	            sheet = workbook.getSheetAt(i);
-	            if ( sheet == null ) { continue; }
-	            
-	            for (int j = sheet.getFirstRowNum(); j <= sheet.getLastRowNum(); j++) {
-	                row = sheet.getRow(j);
-	                if (row == null || row.getFirstCellNum() == j) { continue; }
-	                Map<String, Object> map = new LinkedHashMap<String, Object>();
-	                for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
-	                	biaoti = sheet.getRow(0).getCell(y);
-	                    cell = row.getCell(y);
-	                    
-	                    // 格式转换
-	                    String inputValue = "";
-	                    switch (cell.getCellType()) {	                    	
-	                        case HSSFCell.CELL_TYPE_STRING:
-	                        	inputValue =cell.getRichStringCellValue().getString().trim();
-	                            break;
-	                        case HSSFCell.CELL_TYPE_NUMERIC:	                        	
-	                        	inputValue = ds.format(cell.getNumericCellValue()).replace(",", "");
-	                            break;
-	                          }
-	                    
-	                    map.put(biaoti.toString(), inputValue);	            
-	                }
-	                listMap.add(map);
-	            }            
-			} 
-			workbook.close();			
-			// 写入数据			
-			return new ResObject(200, listMap);
+			
+			InputStream is = file.getInputStream();
+			String fileName = file.getOriginalFilename();
+			if (ExcelImportUtils.validateExcel(fileName) == false) {
+				return new ResObject(400, "上传文件格式不正确");
+            }
+			
+			List<Map<String, Object>> list = importService.getBankListByExcel(is, fileName);
+			List<History> listHistory = new ArrayList<History>();
+			for (Map<String, Object> s : list) {
+				HistoryAddDTO historyAddDTO = new HistoryAddDTO();
+				List<HistoryItems> listItems = new ArrayList<HistoryItems>();
+				for (Entry<String, Object> entry : s.entrySet()) {
+					HistoryItems historyItems = new HistoryItems();
+					if (entry.getKey().equals("templateid")) {
+						historyAddDTO.setTemplateid(Long.parseLong(entry.getValue().toString()));						
+					} else if (entry.getKey().equals("hostid")) {
+						historyAddDTO.setHostid(Long.parseLong(entry.getValue().toString()));
+					} else {
+						historyItems.setItemid(Long.parseLong(entry.getKey().toString()));
+						historyItems.setValue(entry.getValue().toString());
+						listItems.add(historyItems);
+					}					
+				}
+				historyAddDTO.setListItems(listItems);
+				// 保存数据
+				listHistory.add(historyService.add(historyAddDTO));
+			}			
+			return new ResObject(200, listHistory);
 			
 			
 		} catch (IOException e) {
 			System.out.print(e.getMessage());
 	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
 			return new ResObject(400, e.getMessage());
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					System.out.print(e.getMessage());
-					return new ResObject(400, e.getMessage());
-				}
-			}
-		}	    	
+		}     	
     		
 	}
 
