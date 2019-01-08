@@ -92,15 +92,15 @@ function() {
 		$.ajax({
 			timeout: 1000,
 			type : 'POST', // 请求方式；
-			url : 'http://127.0.0.1:3333/auth/login', // 请求url；
+			url : '/auth/login', // 请求url；
 			data : JSON.stringify(data.field),
 			dataType:'JSON',
 			async:false,//要返回值必须定义这个为同步；
 			error : function(){
 				console.log('error');
 			},
-			// var token = window.sessionStorage.token;
-			// headers:{"Authorization", token},
+			// var Authorization = window.sessionStorage.Authorization;
+			// headers:{"Authorization", Authorization},
 			success : function(data) { // 请求成功回 调的函数；
 				if(data.code == 200){	
 					sessionStorage.setItem('Authorization', data.data.Authorization);

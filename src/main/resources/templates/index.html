@@ -31,17 +31,28 @@ layui.use('upload', function(){
 	var $ = layui.jquery
 	,upload = layui.upload;
 	
+	$.ajaxSetup({
+		headers: {
+			"Authorization": window.sessionStorage.Authorization 
+		}
+	});
+	
 	//选完文件后不自动上传
 	upload.render({
-	  elem: '#filename'
-	  ,url: 'http://127.0.0.1/upload/'
-	  ,accept: 'file' //普通文件
-	  ,auto: false
-	  //,multiple: true
-	  ,bindAction: '#upload'
-	  ,done: function(res){
+		elem: '#filename'
+	    ,url: '/api/v1/protected/history/importExcel'  
+	    ,accept: 'file' //普通文件
+	    ,field: 'filename'
+	    ,auto: false
+	    ,bindAction: '#upload'
+	    ,done: function(res){
+	    	if(res.code == 200){
+				layer.alert("上传成功");
+    		}else{
+    			layer.alert("上传失败")
+    		}
 
-	  }
+	    }
 	}); 
 });
 </script>

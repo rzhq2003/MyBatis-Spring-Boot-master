@@ -68,7 +68,6 @@ import tk.mybatis.springboot.util.ExcelImportUtils;
 import tk.mybatis.springboot.util.MyUtils;
 
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
@@ -353,7 +352,7 @@ public class HistoryController {
 			return new ResObject(200, listHistory);
 			
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.print(e.getMessage());
 	        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
 			return new ResObject(400, e.getMessage());
