@@ -80,6 +80,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().loginPage("/auth/login").permitAll()
                 .and()
+                .headers().frameOptions().disable()
+                .and()
                 .logout().logoutSuccessUrl("/auth/login").permitAll()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))

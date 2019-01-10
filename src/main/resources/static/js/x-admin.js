@@ -38,7 +38,7 @@ layui.use(['element'], function(){
   	element.on('nav(side)', function(elem){
     	title = elem.find('cite').text();
     	url = elem.find('a').attr('_href');
-    	menuid =  elem.find('a').attr('id');   
+    	// alert(url);
 
     	for (var i = 0; i <$('.x-iframe').length; i++) {
     		if($('.x-iframe').eq(i).attr('src')==url){
@@ -46,18 +46,17 @@ layui.use(['element'], function(){
     			return;
     		}
     	};
+		id=$('.layui-tab-title li').length;
 
     	element.tabAdd('x-tab', {
 	        title: title//用于演示
 	        ,content: '<iframe frameborder="0" src="'+url+'" class="x-iframe"></iframe>'
-			,id: $('.layui-tab-title li').length
+			,id: id
 		    });
-    	
+		//alert($('.layui-tab-title li').length-1);
 		element.tabChange('x-tab', $('.layui-tab-title li').length-1);
-    	$('.layui-tab-title li').eq(0).find('i').remove();
-    	
-    	
 
+    	$('.layui-tab-title li').eq(0).find('i').remove();
   });
 });
 

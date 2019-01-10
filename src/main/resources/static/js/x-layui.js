@@ -1,9 +1,12 @@
-/*寮瑰嚭灞�/
+/*弹出层*/
 /*
-	鍙傛暟瑙ｉ噴锛�	title	鏍囬
-	url		璇锋眰鐨剈rl
-	id		闇�鎿嶄綔鐨勬暟鎹甶d
-	w		寮瑰嚭灞傚搴︼紙缂虹渷璋冮粯璁ゅ�锛�	h		寮瑰嚭灞傞珮搴︼紙缂虹渷璋冮粯璁ゅ�锛�*/
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
 function x_admin_show(title,url,w,h){
 	if (title == null || title == '') {
 		title=false;
@@ -20,7 +23,8 @@ function x_admin_show(title,url,w,h){
 	layer.open({
 		type: 2,
 		area: [w+'px', h +'px'],
-		fix: false, //涓嶅浐瀹�		maxmin: true,
+		fix: false, //不固定
+		maxmin: true,
 		shadeClose: true,
 		shade:0.4,
 		title: title,
@@ -28,7 +32,7 @@ function x_admin_show(title,url,w,h){
 	});
 }
 
-/*鍏抽棴寮瑰嚭妗嗗彛*/
+/*关闭弹出框口*/
 function x_admin_close(){
 	var index = parent.layer.getFrameIndex(window.name);
 	parent.layer.close(index);
